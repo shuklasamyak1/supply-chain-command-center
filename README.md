@@ -2,6 +2,7 @@
 
 <div align="center">
   <img src="Dashboard1.png" alt="Operational Dispatch Matrix" width="100%" />
+ Link to the Dashboard: https://supply-chain-command-center-pgzcwfma9cbbey4zo2zkyj.streamlit.app/
 </div>
 
 <br/>
