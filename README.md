@@ -22,7 +22,7 @@ This platform implements a dual-engine architecture:
 ###  Prescriptive Executive Decision Engine
 
 <p align="center">
-  <img src="Decision_maker.gif" alt="Autonomous Decision Engine Live Demo" width="100%" style="border-radius: 8px; border: 1px solid #133326;" />
+  <img src="Decision_maker.mp4" alt="Autonomous Decision Engine Live Demo" width="100%" style="border-radius: 8px; border: 1px solid #133326;" />
 </p>
 
 Unlike passive descriptive dashboards, the engine acts as an autonomous decision system:
