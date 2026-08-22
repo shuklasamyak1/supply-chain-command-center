@@ -22,6 +22,11 @@ This platform implements a dual-engine architecture:
 ###  Prescriptive Executive Decision Engine
 
 <p align="center">
+  
+
+https://github.com/user-attachments/assets/84d0d8ae-8a2a-4992-823b-c9d4749f8123
+
+
   <video src="./Decision_maker.mp4" width="100%" autoplay loop muted playsinline style="border-radius: 8px; border: 1px solid #133326;"></video>
 </p>
 
