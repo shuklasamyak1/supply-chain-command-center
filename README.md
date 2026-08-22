@@ -1,105 +1,66 @@
-Autonomous Quantitative Logistics Intelligence Terminal
+# Autonomous Sourcing & Disruption Solver
 
-An institutional-grade Operations Research (OR) and Quantitative Decision Intelligence Terminal built to solve multi-echelon procurement allocation problems under capacity bounds, freight volatility, contractual Service Level Agreements (SLA), and Scope-3 ESG carbon constraints.
+<div align="center">
+  <img src="GIF_Dashboard.gif" alt="Autonomous Solver Live Preview" width="100%" />
+</div>
 
-🔗 Live Interactive App: supply-chain-command-center.streamlit.app
+<br/>
 
-📌 Executive Summary & Key Highlights
+An Operations Research (OR) and Prescriptive Analytics platform built to solve multi-echelon procurement allocation under capacity, freight volatility, service-level (SLA), and Scope-3 carbon constraints.
 
-Traditional enterprise procurement often relies on naive sticker-price sorting or unoptimized status-quo equal-split sourcing. This terminal formulates procurement allocation as a Mixed-Integer Linear Program (MILP) and solves it in real time, capturing Capital Arbitrage and quantifying supply-chain tail risks.
+---
 
-Prescriptive MILP Solver Engine: Real-time rebalancing of sourcing allocations via the COIN-OR CBC solver (PuLP).
+## 📸 System Architecture & Visual Walkthrough
 
-Dual Value Shadow Price Matrix: Calculates the exact marginal return (€/unit) of expanding capacity constraints ($\pi_j = \partial Z^* / \partial b_j$) for contract negotiations.
+### 1. Operational Dispatch Matrix & Capacity Analysis
+Solves the global cost minimum and tracks unit allocation across fulfillment hubs.
 
-Stochastic Monte Carlo Risk Engine: 1,000-trial simulation calculating 95% Value-at-Risk ($\text{VaR}_{95}$) and Conditional Value-at-Risk ($\text{CVaR}_{95}$ / Expected Shortfall).
+<div align="center">
+  <img src="Dashboard1.png" alt="Operational Dispatch Matrix" width="90%" />
+</div>
 
-Multi-Objective ESG Pareto Frontier: Sweeps $\epsilon$-constraint thresholds to model the efficient tradeoff between procurement outlay and Scope-3 carbon footprints ($\text{t CO}_2\text{e}$).
+<br/>
 
-Dynamic Topology Manipulation: Full CRUD capability via an interactive matrix allowing users to rename nodes, inject rate shocks, alter reliability floors, or add custom fulfillment hubs.
+### 2. Stochastic Monte Carlo & Tail-Risk Distribution (VaR)
+Simulates 1,000 disruption cycles to calculate Parametric Value-at-Risk ($VaR_{95}$) and Conditional Value-at-Risk ($CVaR_{95}$).
 
-📐 Mathematical Formulation
+<div align="center">
+  <img src="Dashboard2.png" alt="Monte Carlo Simulation" width="90%" />
+</div>
 
-1. Objective Function (Landed Cost Minimization)
+<br/>
 
-$$\min Z = \sum_{i=1}^N x_i \cdot \left[ P_i + F_i + (1 - R_i) \cdot K_i \right]$$
+### 3. Multi-Objective ESG Pareto Efficient Frontier
+Maps the mathematical trade-off curve between monetary procurement spend and Scope-3 carbon emission caps.
 
-Where:
+<div align="center">
+  <img src="Dashboard3.png" alt="Multi-Objective Pareto Frontier" width="90%" />
+</div>
 
-$x_i$: Units allocated to sourcing node $i$ ($x_i \ge 0$)
+<br/>
 
-$P_i$: Base unit purchase price (€)
+### 4. Dual Shadow Pricing & Economic Bottlenecks
+Extracts linear programming dual variables ($\pi$) to identify active capacity constraints and calculate marginal returns on contract renegotiation.
 
-$F_i$: Freight and logistics surcharge per unit (€)
+<div align="center">
+  <img src="Dashboard4.png" alt="Dual Shadow Price Engine" width="90%" />
+</div>
 
-$R_i$: Historical delivery reliability score ($0 \le R_i \le 1$)
+---
 
-$K_i$: Financial penalty fee per unfulfilled/delayed unit (€)
+## ⚡ Mathematical Formulation (MILP)
 
-2. Network Constraints
+$$\min \sum_{i} x_i \cdot \left[ \text{Base Price}_i + \text{Freight}_i + (1 - \text{Reliability}_i) \cdot \text{Risk Penalty}_i \right]$$
 
-Demand Balance: $\sum_{i=1}^N x_i = D$
+### Constraints:
+* **Demand Satisfaction:** $\sum_{i} x_i = D$
+* **Capacity Bounds:** $0 \le x_i \le C_i \quad \forall i$
+* **Contractual Service Level (SLA):** $\sum_{i} (\text{Reliability}_i \cdot x_i) \ge \text{SLA} \cdot D$
+* **Scope-3 Carbon Cap:** $\sum_{i} \left(\frac{\text{Carbon}_i}{1000} \cdot x_i\right) \le \text{Budget}$
 
-Node Capacity Upper Bounds: $x_i \le C_i \quad \forall i$
+---
 
-Contractual SLA Reliability Floor: $\sum_{i=1}^N R_i x_i \ge \text{SLA}_{\text{target}} \cdot D$
-
-Scope-3 Carbon Cap: $\sum_{i=1}^N \left(\frac{E_i}{1000}\right) x_i \le B_{\text{carbon}}$ (where $E_i$ is $\text{kg CO}_2\text{e}/\text{unit}$)
-
-🛠️ Technology Stack
-
-Core Language: Python 3.10+
-
-Linear Programming Engine: PuLP (COIN-OR CBC Solver)
-
-Stochastic & Matrix Analytics: NumPy, Pandas
-
-Data Visualization: Plotly Graph Objects
-
-Web Framework & UI: Streamlit
-
-🚀 Local Installation & Setup
-
-Clone the Repository:
-
-git clone https://github.com/shuklasamyak1/supply-chain-command-center.git
-cd supply-chain-command-center
-
-
-Create a Virtual Environment (Optional but Recommended):
-
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-
-Install Dependencies:
-
-pip install -r requirements.txt
-
-
-Run the Application:
-
-streamlit run app.py
-
-
-📊 Module Walkthrough
-
-1. Operational Dispatch Matrix
-
-Visualizes allocated units vs. maximum node capacity side-by-side, alongside a stacked breakdown of unit landed cost components (Base Sticker + Freight + Disruption Risk Penalty).
-
-2. Stochastic Monte Carlo & Tail-Risk
-
-Runs 1,000 randomized disruption trials to map the risk distribution curve, identifying the 95th percentile Value-at-Risk ($\text{VaR}_{95}$) and tail expected shortfall ($\text{CVaR}_{95}$).
-
-3. Multi-Objective ESG Pareto Frontier
-
-Illustrates the non-dominated tradeoff curve between Total Cost (€) and Scope-3 Carbon Intensity ($\text{t CO}_2\text{e}$) under varying corporate emissions budgets.
-
-4. Dual Shadow Price Engine
-
-Exposes solver dual values ($\pi_j$) to highlight binding bottlenecks, providing procurement leads with numerical leverage during contract negotiations.
-
-📜 License
-
-Distributed under the MIT License. Built for quantitative portfolio demonstration and enterprise decision-intelligence benchmarking.
+## 🛠️ Tech Stack
+* **Optimization Engine:** PuLP (COIN-OR Branch & Cut)
+* **Risk & Analytics:** NumPy, Pandas
+* **Visualization & UI:** Streamlit, Plotly Graph Objects
