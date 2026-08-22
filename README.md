@@ -19,6 +19,16 @@ This platform implements a dual-engine architecture:
 * **Deterministic Core:** A Mixed-Integer Linear Programming (MILP) optimization engine that calculates the global minimum-cost dispatch ledger.
 * **Stochastic Risk Layer:** A Monte Carlo simulation suite executing 1,000 synthetic disruption cycles to quantify parametric tail risk and structural capital exposure.
 
+###  Prescriptive Executive Decision Engine
+
+<p align="center">
+  <img src="Decision_maker.gif" alt="Autonomous Decision Engine Live Demo" width="100%" style="border-radius: 8px; border: 1px solid #133326;" />
+</p>
+
+Unlike passive descriptive dashboards, the engine acts as an autonomous decision system:
+* **Automated Action Directives:** Converts complex LP matrix outputs into plain-English procurement orders (**Priority Max-Out**, **SLA Balancing**, or **Zero Allocation / Bypassed**).
+* **Eliminates Human Bias:** Replaces naive equal-split ordering with mathematically optimal volume distribution.
+* **Bottleneck ROI via Shadow Pricing:** Calculates the exact dollar savings achieved for every single unit of expanded contract capacity ($\pi = \partial \mathcal{L}^* / \partial K_i$).
 ---
 
 ## System Modules
