@@ -80,6 +80,47 @@ st.markdown("""
         color: #a7f3d0 !important;
         font-weight: 600 !important;
     }
+
+    .directive-card {
+        background-color: #081611;
+        border: 1px solid #133326;
+        border-radius: 4px;
+        padding: 1rem 1.4rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .badge-priority {
+        background-color: #064e3b;
+        color: #34d399;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        border: 1px solid #059669;
+    }
+
+    .badge-balancing {
+        background-color: #451a03;
+        color: #fbbf24;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        border: 1px solid #d97706;
+    }
+
+    .badge-avoid {
+        background-color: #450a0a;
+        color: #f87171;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        border: 1px solid #dc2626;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -217,11 +258,13 @@ else:
 
 # Extract Dual Shadow Prices
 shadow_prices = []
+shadow_dict = {}
 if is_feasible:
     for name, constraint in model.constraints.items():
         if "Capacity" in name or "Carbon" in name or "Service" in name:
             clean_node = name.replace("Capacity_", "").replace("_", " ")
             shadow_val = constraint.pi if constraint.pi is not None else 0.0
+            shadow_dict[clean_node] = abs(round(shadow_val, 2))
             shadow_prices.append({
                 "Constrained Frontier": clean_node,
                 "Marginal Shadow Value (€/unit)": abs(round(shadow_val, 2)),
@@ -261,6 +304,53 @@ k4.metric("TOTAL CARBON FOOTPRINT", f"{total_carbon_tons:.1f} t CO2e" if is_feas
 
 if not is_feasible:
     st.error("Constraint Violation: Model infeasible under current capacity, SLA reliability, or ESG carbon budget.")
+
+# --- PRESCRIPTIVE EXECUTIVE ALLOCATION DIRECTIVES ---
+if is_feasible:
+    with st.expander("📋 PRESCRIPTIVE SOURCING MANDATES (OPTIMAL DECISION LOGIC)", expanded=True):
+        st.markdown(
+            f"**Execution Summary:** Sourcing **{target_demand:,.0f} units** across active fulfillment hubs achieves an optimal spend of **€{total_optimal_spend:,.2f}** "
+            f"generating **€{loss_avoidance:,.2f}** in net savings vs. naive split sourcing, while locking tail-risk exposure (VaR₉₅) to **€{var_95:,.2f}**."
+        )
+        st.markdown("---")
+        
+        for _, row in df_results.iterrows():
+            node = row["Sourcing Node"]
+            allocated = row["Allocated Units"]
+            capacity = row["Max Capacity"]
+            landed = row["True Landed (€)"]
+            utilization = (allocated / capacity) * 100 if capacity > 0 else 0
+            shadow_val = shadow_dict.get(node, 0.0)
+
+            if allocated >= capacity and capacity > 0:
+                badge = '<span class="badge-priority">MAX ALLOCATION (100% CAPACITY)</span>'
+                rationale = (
+                    f"Order <strong>{allocated:,.0f} units</strong>. Node operates as a primary low-landed-cost workhorse (€{landed:.2f}/unit). "
+                    f"<em>Binding bottleneck: Expanding this supplier's contract capacity yields <strong>€{shadow_val:.2f}/unit</strong> in direct network savings.</em>"
+                )
+            elif allocated > 0:
+                badge = '<span class="badge-balancing">STRATEGIC BALANCING NODE</span>'
+                rationale = (
+                    f"Order <strong>{allocated:,.0f} of {capacity:,.0f} units ({utilization:.1f}% capacity)</strong> at €{landed:.2f}/unit. "
+                    f"Dispatched in precision quantity to satisfy your <strong>{int(target_service_level * 100)}% SLA reliability floor</strong> and ESG carbon limits."
+                )
+            else:
+                badge = '<span class="badge-avoid">ZERO ALLOCATION (BYPASSED)</span>'
+                rationale = (
+                    f"Order <strong>0 units</strong>. Node unreliability risk charges or carbon footprint exceed current network equilibrium thresholds."
+                )
+
+            st.markdown(f"""
+                <div class="directive-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                        <span style="font-weight: 700; color: #f0fdf4; font-size: 0.95rem;">{node}</span>
+                        {badge}
+                    </div>
+                    <div style="font-size: 0.85rem; color: #a7f3d0; line-height: 1.4;">
+                        {rationale}
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
 
 st.markdown("---")
 
