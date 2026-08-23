@@ -1,422 +1,458 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.graph_objects as go
 import pulp
+import plotly.graph_objects as go
+import plotly.express as px
 
-# Page Configuration
+# --- PAGE CONFIGURATION ---
 st.set_page_config(
-    page_title="Autonomous Quantitative Logistics Intelligence",
+    page_title="Autonomous Multi-Tier Sourcing & Disruption Solver",
     page_icon="⚡",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
 )
 
-# Custom Typography & High-Density Terminal Styling
+# --- PALETTE: #212B7B (Navy) | #B8A9FF (Steel Blue) | #F2EEFF (Alice Blue) | #E0EFBA (Lime) ---
 st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
-    
-    html, body, [class*="css"] {
-        font-family: 'Space Grotesk', sans-serif;
-    }
-    
+<style>
     .stApp {
-        background-color: #050d0a;
-        color: #ecfdf5;
+        background-color: #121842;
+        color: #F2EEFF;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-
     section[data-testid="stSidebar"] {
-        background-color: #081611 !important;
-        border-right: 1px solid #133326;
+        background-color: #181F54 !important;
+        border-right: 1px solid rgba(184, 169, 255, 0.25) !important;
     }
-    
-    section[data-testid="stSidebar"] * {
-        color: #ecfdf5 !important;
-        font-family: 'Space Grotesk', sans-serif !important;
+    section[data-testid="stSidebar"] h1, 
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] .stMarkdown {
+        color: #F2EEFF !important;
     }
-
-    div[data-testid="stMetricValue"] div {
-        font-family: 'JetBrains Mono', monospace !important;
-        font-weight: 800 !important;
-        color: #10b981 !important;
+    .glass-card {
+        background: #1B235E;
+        border: 1px solid rgba(184, 169, 255, 0.25);
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
     }
-
-    .terminal-header {
-        background-color: #081611;
-        border: 1px solid #133326;
-        border-left: 4px solid #10b981;
-        padding: 1.2rem 1.8rem;
-        border-radius: 4px;
-        margin-bottom: 1.5rem;
+    .glass-card-accent {
+        background: linear-gradient(135deg, #1B235E 0%, #212B7B 100%);
+        border: 1px solid #B8A9FF;
+        border-radius: 10px;
+        padding: 18px 22px;
+        margin-bottom: 16px;
     }
-    
-    .terminal-title {
-        font-size: 1.3rem;
+    .metric-value {
+        font-size: 1.85rem;
         font-weight: 700;
-        letter-spacing: -0.01em;
-        color: #f0fdf4;
+        color: #E0EFBA;
+        line-height: 1.2;
+    }
+    .metric-sub {
+        font-size: 0.8rem;
+        color: #B8A9FF;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 4px;
+    }
+    .metric-caption {
+        font-size: 0.78rem;
+        color: #D4CDFF;
+        margin-top: 4px;
+    }
+    .directive-box {
+        background: #161D53;
+        border-left: 4px solid #E0EFBA;
+        padding: 12px 16px;
+        border-radius: 0 8px 8px 0;
+        margin-bottom: 10px;
+        border-top: 1px solid rgba(184, 169, 255, 0.15);
+        border-right: 1px solid rgba(184, 169, 255, 0.15);
+        border-bottom: 1px solid rgba(184, 169, 255, 0.15);
+    }
+    .badge-priority {
+        background-color: rgba(224, 239, 186, 0.18);
+        color: #E0EFBA;
+        border: 1px solid #E0EFBA;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
         text-transform: uppercase;
     }
-
-    .terminal-subtitle {
-        font-size: 0.8rem;
-        color: #6ee7b7;
-        font-family: 'JetBrains Mono', monospace;
-        margin-top: 0.2rem;
-    }
-
-    div[data-testid="stMetric"] {
-        background-color: #081611 !important;
-        border: 1px solid #133326 !important;
-        border-radius: 4px;
-        padding: 1rem;
-    }
-    
-    div[data-testid="stMetricLabel"] p {
-        font-size: 0.7rem !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.08em !important;
-        color: #a7f3d0 !important;
-        font-weight: 600 !important;
-    }
-
-    .directive-card {
-        background-color: #081611;
-        border: 1px solid #133326;
-        border-radius: 4px;
-        padding: 1rem 1.4rem;
-        margin-bottom: 0.8rem;
-    }
-
-    .badge-priority {
-        background-color: #064e3b;
-        color: #34d399;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.75rem;
-        font-weight: 700;
-        padding: 0.2rem 0.5rem;
-        border-radius: 3px;
-        border: 1px solid #059669;
-    }
-
     .badge-balancing {
-        background-color: #451a03;
-        color: #fbbf24;
-        font-family: 'JetBrains Mono', monospace;
+        background-color: rgba(184, 169, 255, 0.2);
+        color: #B8A9FF;
+        border: 1px solid #B8A9FF;
+        padding: 3px 8px;
+        border-radius: 4px;
         font-size: 0.75rem;
         font-weight: 700;
-        padding: 0.2rem 0.5rem;
-        border-radius: 3px;
-        border: 1px solid #d97706;
+        text-transform: uppercase;
     }
-
-    .badge-avoid {
-        background-color: #450a0a;
-        color: #f87171;
-        font-family: 'JetBrains Mono', monospace;
+    .badge-bypassed {
+        background-color: rgba(255, 120, 120, 0.15);
+        color: #FF9E9E;
+        border: 1px solid #FF7878;
+        padding: 3px 8px;
+        border-radius: 4px;
         font-size: 0.75rem;
         font-weight: 700;
-        padding: 0.2rem 0.5rem;
-        border-radius: 3px;
-        border: 1px solid #dc2626;
+        text-transform: uppercase;
     }
-    </style>
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        border-bottom: 1px solid rgba(184, 169, 255, 0.2);
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: #181F54 !important;
+        border-radius: 6px 6px 0 0 !important;
+        color: #B8A9FF !important;
+        padding: 8px 16px !important;
+        border: 1px solid rgba(184, 169, 255, 0.2) !important;
+        border-bottom: none !important;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #212B7B !important;
+        color: #E0EFBA !important;
+        border: 1px solid #B8A9FF !important;
+        border-bottom: 2px solid #E0EFBA !important;
+        font-weight: 700 !important;
+    }
+    h1, h2, h3, h4 {
+        color: #F2EEFF !important;
+        font-weight: 700;
+    }
+    p, span, label {
+        color: #F2EEFF;
+    }
+</style>
 """, unsafe_allow_html=True)
 
-# Header
-st.markdown("""
-    <div class="terminal-header">
-        <div class="terminal-title">QUANTITATIVE OPERATIONS RESEARCH & RISK TERMINAL</div>
-        <div class="terminal-subtitle">ENGINE: MILP-CBC // STOCHASTIC MONTE CARLO VaR // MULTI-OBJECTIVE PARETO ESG OPTIMIZATION</div>
+# --- HEADER SECTION ---
+col_head, col_badge = st.columns([4, 1])
+with col_head:
+    st.markdown("<h1 style='margin-bottom: 0px;'>⚡ Autonomous Multi-Tier Sourcing & Disruption Solver</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #B8A9FF; font-size: 0.95rem; margin-top: 2px;'>Prescriptive MILP Optimizer with Dual Economic Shadow Values & Stochastic Tail-Risk Stress Engine</p>", unsafe_allow_html=True)
+with col_badge:
+    st.markdown("""
+    <div style='text-align: right; padding-top: 10px;'>
+        <span style='background: #1B235E; border: 1px solid #B8A9FF; color: #E0EFBA; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;'>
+            Engine: PuLP / CBC Active
+        </span>
     </div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-# Default Network Seed Data with Carbon Footprints
-default_suppliers = pd.DataFrame([
-    {"Node Name": "Hub DACH (Germany)", "Base Price (€)": 38.0, "Freight (€)": 2.5, "Reliability (%)": 98.0, "Max Capacity": 4500, "Risk Penalty (€)": 12.0, "Carbon (kg CO2e/unit)": 4.2},
-    {"Node Name": "Hub CEE (Poland)", "Base Price (€)": 32.0, "Freight (€)": 4.5, "Reliability (%)": 92.0, "Max Capacity": 4500, "Risk Penalty (€)": 18.0, "Carbon (kg CO2e/unit)": 6.8},
-    {"Node Name": "Hub APAC (East Asia)", "Base Price (€)": 26.0, "Freight (€)": 6.0, "Reliability (%)": 82.0, "Max Capacity": 5500, "Risk Penalty (€)": 24.0, "Carbon (kg CO2e/unit)": 14.5},
+# --- DEFAULT TOPOLOGY DATA ---
+default_nodes = pd.DataFrame([
+    {"Hub": "APAC Tier-1 Hub", "Base_Cost": 26.50, "Freight": 5.20, "Capacity": 5500, "Reliability": 0.82, "Penalty": 14.00, "Carbon_kg": 12.5},
+    {"Hub": "CEE Rail Hub",   "Base_Cost": 32.00, "Freight": 3.80, "Capacity": 4000, "Reliability": 0.91, "Penalty": 12.00, "Carbon_kg": 7.8},
+    {"Hub": "DACH Dedicated",  "Base_Cost": 38.50, "Freight": 1.50, "Capacity": 4500, "Reliability": 0.98, "Penalty": 8.50,  "Carbon_kg": 4.2},
+    {"Hub": "Nordics Nearshore","Base_Cost": 41.00, "Freight": 2.10, "Capacity": 3000, "Reliability": 0.96, "Penalty": 9.00,  "Carbon_kg": 3.5}
 ])
 
-# Sidebar Controls
-st.sidebar.markdown("#### **SYSTEM BOUNDS**")
-target_demand = st.sidebar.number_input("Demand Target (Units)", min_value=1000, max_value=50000, value=10000, step=1000)
-target_service_level = st.sidebar.slider("SLA Reliability Floor (%)", min_value=70, max_value=98, value=88, step=1) / 100.0
+# --- SIDEBAR: PARAMETERS ---
+with st.sidebar:
+    st.markdown("<h3 style='color: #E0EFBA;'>1. Operational Targets</h3>", unsafe_allow_html=True)
+    demand = st.slider("Target Network Demand (Units)", min_value=3000, max_value=15000, value=10000, step=500)
+    sla_floor = st.slider("Contractual SLA Floor (Min %)", min_value=0.70, max_value=0.99, value=0.88, step=0.01, format="%.2f")
+    carbon_cap = st.slider("Scope-3 Carbon Cap (Metric Tons)", min_value=30.0, max_value=150.0, value=90.0, step=5.0)
+    
+    st.markdown("---")
+    st.markdown("<h3 style='color: #E0EFBA;'>2. Macro Surcharges</h3>", unsafe_allow_html=True)
+    freight_shock = st.slider("Global Freight Shock Adder (€/unit)", min_value=0.0, max_value=10.0, value=0.0, step=0.5)
 
-st.sidebar.markdown("---")
-st.sidebar.markdown("#### **MULTI-OBJECTIVE & ESG BOUNDS**")
-carbon_cap_enabled = st.sidebar.checkbox("Enforce Scope-3 Carbon Emissions Cap", value=False)
-max_carbon_budget = st.sidebar.slider("Carbon Budget Cap (Metric Tons CO2e)", min_value=40.0, max_value=150.0, value=85.0, step=5.0)
+# --- EDITABLE NETWORK TOPOLOGY ---
+with st.expander("🛠️ Configure Node Topology & Supplier Contract Parameters", expanded=False):
+    st.write("Modify hub pricing, capacities, historical reliability rates, and environmental factors:")
+    edited_df = st.data_editor(default_nodes, num_rows="dynamic", use_container_width=True)
 
-st.sidebar.markdown("---")
-st.sidebar.markdown("#### **STOCHASTIC STRESS TEST**")
-global_freight_surcharge = st.sidebar.slider("Global Freight Surcharge (+€/unit)", min_value=0.0, max_value=20.0, value=0.0, step=0.5)
+# Apply global surcharge
+topology = edited_df.copy()
+topology["Freight"] = topology["Freight"] + freight_shock
+topology["Total_Landed_Expected"] = topology["Base_Cost"] + topology["Freight"] + ((1.0 - topology["Reliability"]) * topology["Penalty"])
 
-# Interactive Supplier Management Matrix
-with st.expander("⚙️ CONFIGURE SOURCING TOPOLOGY & ESG PARAMETERS", expanded=False):
-    st.caption("Live node manipulation: update rates, ESG footprints, or add custom fulfillment hubs.")
-    edited_suppliers = st.data_editor(
-        default_suppliers,
-        num_rows="dynamic",
-        use_container_width=True,
-        hide_index=True
-    )
+# --- CORE OPTIMIZATION ENGINE (PuLP MILP) ---
+def solve_sourcing(df, total_demand, min_sla, max_carbon):
+    prob = pulp.LpProblem("Sourcing_Optimization", pulp.LpMinimize)
+    hubs = df["Hub"].tolist()
+    
+    # Decision Variables
+    x = {h: pulp.LpVariable(f"Alloc_{h}", lowBound=0, upBound=float(df.loc[df["Hub"] == h, "Capacity"].values[0]), cat="Continuous") for h in hubs}
+    
+    # Objective: Minimize Landed Cost + Expected Disruption Risk
+    prob += pulp.lpSum([x[h] * float(df.loc[df["Hub"] == h, "Total_Landed_Expected"].values[0]) for h in hubs])
+    
+    # Constraints
+    prob += pulp.lpSum([x[h] for h in hubs]) == total_demand, "Demand_Constraint"
+    prob += pulp.lpSum([x[h] * float(df.loc[df["Hub"] == h, "Reliability"].values[0]) for h in hubs]) >= total_demand * min_sla, "SLA_Constraint"
+    prob += pulp.lpSum([x[h] * (float(df.loc[df["Hub"] == h, "Carbon_kg"].values[0]) / 1000.0) for h in hubs]) <= max_carbon, "Carbon_Constraint"
+    
+    solver = pulp.PULP_CBC_CMD(msg=0)
+    prob.solve(solver)
+    
+    status = pulp.LpStatus[prob.status]
+    allocations = {h: x[h].varValue if x[h].varValue is not None else 0.0 for h in hubs}
+    
+    # Extract Shadow Prices (Duals)
+    shadow_prices = {}
+    for name, c in prob.constraints.items():
+        shadow_prices[name] = c.pi if c.pi is not None else 0.0
+        
+    return status, allocations, pulp.value(prob.objective), shadow_prices
 
-if edited_suppliers.empty or edited_suppliers["Node Name"].isnull().all():
-    st.error("Network Topology Empty: Please define at least one supplier node.")
+opt_status, alloc_dict, opt_cost, duals = solve_sourcing(topology, demand, sla_floor, carbon_cap)
+
+# Handle Infeasible Solution Gracefully
+if opt_status != "Optimal":
+    st.error(f"⚠️ Optimization status: {opt_status}. The specified SLA floor ({sla_floor*100:.1f}%) and Carbon Cap ({carbon_cap}t) are mutually incompatible with node capacities. Relax constraints in the sidebar.")
     st.stop()
 
-# Convert edited grid into structured dictionary
-suppliers = {}
-for _, row in edited_suppliers.iterrows():
-    if pd.notnull(row["Node Name"]) and str(row["Node Name"]).strip() != "":
-        node_name = str(row["Node Name"]).strip()
-        suppliers[node_name] = {
-            "unit_cost": float(row["Base Price (€)"]),
-            "freight_cost": float(row["Freight (€)"]) + global_freight_surcharge,
-            "reliability": float(row["Reliability (%)"]) / 100.0,
-            "capacity": int(row["Max Capacity"]),
-            "risk_penalty": float(row["Risk Penalty (€)"]),
-            "carbon": float(row["Carbon (kg CO2e/unit)"])
-        }
+# Attach allocations to topology
+topology["Allocated_Units"] = topology["Hub"].map(alloc_dict)
+topology["Alloc_Pct"] = (topology["Allocated_Units"] / topology["Capacity"]) * 100.0
+topology["Total_Carbon_Tons"] = (topology["Allocated_Units"] * topology["Carbon_kg"]) / 1000.0
+topology["Total_Spend_EUR"] = topology["Allocated_Units"] * topology["Total_Landed_Expected"]
 
-# --- Mathematical Optimization (MILP) ---
-model = pulp.LpProblem("Supply_Optimization", pulp.LpMinimize)
+# Executive Metrics
+total_carbon_emitted = topology["Total_Carbon_Tons"].sum()
+blended_reliability = (topology["Allocated_Units"] * topology["Reliability"]).sum() / demand
 
-order_vars = {
-    s: pulp.LpVariable(f"Order_{idx}", lowBound=0, cat="Continuous")
-    for idx, (s, data) in enumerate(suppliers.items())
-}
+# Status Quo Benchmark (Naive Equal Split across available capacity)
+naive_alloc_factor = demand / topology["Capacity"].sum()
+naive_spend = (topology["Capacity"] * naive_alloc_factor * topology["Total_Landed_Expected"]).sum()
+arbitrage_savings = naive_spend - opt_cost
 
-# 1. Objective Function: Landed Cost Minimization
-total_cost_expr = []
-for idx, (s, data) in enumerate(suppliers.items()):
-    risk_charge = (1.0 - data["reliability"]) * data["risk_penalty"]
-    landed_unit_cost = data["unit_cost"] + data["freight_cost"] + risk_charge
-    total_cost_expr.append(order_vars[s] * landed_unit_cost)
-
-model += pulp.lpSum(total_cost_expr)
-
-# 2. Demand Satisfaction
-model += pulp.lpSum([order_vars[s] for s in suppliers]) == target_demand, "Demand_Satisfaction"
-
-# 3. Capacity Bounds
-for s, data in suppliers.items():
-    model += order_vars[s] <= data["capacity"], f"Capacity_{s.replace(' ', '_')}"
-
-# 4. Service Level Floor
-model += pulp.lpSum([order_vars[s] * data["reliability"] for s, data in suppliers.items()]) >= (target_service_level * target_demand), "Service_Level_Floor"
-
-# 5. ESG Carbon Emission Constraint
-if carbon_cap_enabled:
-    model += pulp.lpSum([order_vars[s] * (data["carbon"] / 1000.0) for s, data in suppliers.items()]) <= max_carbon_budget, "Carbon_Emissions_Cap"
-
-# Solve
-model.solve(pulp.PULP_CBC_CMD(msg=False))
-is_feasible = pulp.LpStatus[model.status] == "Optimal"
-
-# Baseline Benchmark (Status-Quo Equal Split)
-active_node_count = len(suppliers)
-equal_share_per_node = target_demand / active_node_count if active_node_count > 0 else 0
-
-naive_benchmark_cost = sum(
-    equal_share_per_node * (d["unit_cost"] + d["freight_cost"] + ((1.0 - d["reliability"]) * d["risk_penalty"]))
-    for d in suppliers.values()
-)
-
-# Results Matrix
-results = []
-total_carbon_tons = 0.0
-for s, data in suppliers.items():
-    qty = order_vars[s].varValue if is_feasible else 0.0
-    risk_charge = (1.0 - data["reliability"]) * data["risk_penalty"]
-    landed_unit_cost = data["unit_cost"] + data["freight_cost"] + risk_charge
-    node_carbon = (qty * data["carbon"]) / 1000.0
-    total_carbon_tons += node_carbon
-    
-    results.append({
-        "Sourcing Node": s,
-        "Max Capacity": data["capacity"],
-        "Base Cost (€)": data["unit_cost"],
-        "Freight (€)": round(data["freight_cost"], 2),
-        "Reliability (%)": f"{int(data['reliability'] * 100)}%",
-        "True Landed (€)": round(landed_unit_cost, 2),
-        "Allocated Units": round(qty, 0),
-        "Carbon Footprint (t)": round(node_carbon, 2),
-        "Total Outlay (€)": round(qty * landed_unit_cost, 2)
-    })
-
-df_results = pd.DataFrame(results)
-total_optimal_spend = pulp.value(model.objective) if is_feasible else 0.0
-loss_avoidance = max(0.0, naive_benchmark_cost - total_optimal_spend)
-
-if is_feasible and target_demand > 0:
-    achieved_sl = sum(row["Allocated Units"] * suppliers[row["Sourcing Node"]]["reliability"] for _, row in df_results.iterrows()) / target_demand
-else:
-    achieved_sl = 0.0
-
-# Extract Dual Shadow Prices
-shadow_prices = []
-shadow_dict = {}
-if is_feasible:
-    for name, constraint in model.constraints.items():
-        if "Capacity" in name or "Carbon" in name or "Service" in name:
-            clean_node = name.replace("Capacity_", "").replace("_", " ")
-            shadow_val = constraint.pi if constraint.pi is not None else 0.0
-            shadow_dict[clean_node] = abs(round(shadow_val, 2))
-            shadow_prices.append({
-                "Constrained Frontier": clean_node,
-                "Marginal Shadow Value (€/unit)": abs(round(shadow_val, 2)),
-                "Strategic Interpretation": "Active Bottleneck (Marginal Relaxation ROI)" if abs(shadow_val) > 0 else "Slack Boundary (Non-Binding)"
-            })
-
-df_shadow = pd.DataFrame(shadow_prices)
-
-# --- Monte Carlo 1,000 Trial Tail-Risk Simulation ---
-np.random.seed(42)
-if is_feasible and total_optimal_spend > 0:
-    sim_iterations = 1000
-    sim_costs = np.zeros(sim_iterations)
-    
-    for i in range(sim_iterations):
-        iter_cost = 0.0
-        for s, data in suppliers.items():
-            qty = order_vars[s].varValue
-            if qty > 0:
-                is_disrupted = np.random.binomial(1, 1.0 - data["reliability"])
-                freight_jitter = np.random.normal(0, data["freight_cost"] * 0.15)
-                unit_run_cost = data["unit_cost"] + max(0, data["freight_cost"] + freight_jitter) + (is_disrupted * data["risk_penalty"])
-                iter_cost += qty * unit_run_cost
-        sim_costs[i] = iter_cost
-    
-    var_95 = np.percentile(sim_costs, 95)
-    cvar_95 = sim_costs[sim_costs >= var_95].mean()
-else:
-    var_95, cvar_95, sim_costs = 0.0, 0.0, np.zeros(10)
-
-# KPI Row
+# --- EXECUTIVE KPI DASHBOARD ---
+st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
 k1, k2, k3, k4 = st.columns(4)
-k1.metric("OPTIMIZED NETWORK SPEND", f"€{total_optimal_spend:,.2f}" if is_feasible else "€0.00")
-k2.metric("CAPITAL ARBITRAGE", f"€{loss_avoidance:,.2f}" if is_feasible else "€0.00", delta=f"{(loss_avoidance / naive_benchmark_cost) * 100:.1f}% vs Status Quo" if is_feasible and naive_benchmark_cost > 0 else None)
-k3.metric("PARAMETRIC VaR (95%)", f"€{var_95:,.2f}" if is_feasible else "€0.00", delta=f"+€{max(0, var_95 - total_optimal_spend):,.0f} Tail Risk")
-k4.metric("TOTAL CARBON FOOTPRINT", f"{total_carbon_tons:.1f} t CO2e" if is_feasible else "0.0 t", delta="Under ESG Cap" if not carbon_cap_enabled or total_carbon_tons <= max_carbon_budget else "CAP BREACHED")
 
-if not is_feasible:
-    st.error("Constraint Violation: Model infeasible under current capacity, SLA reliability, or ESG carbon budget.")
+with k1:
+    st.markdown(f"""
+    <div class='glass-card'>
+        <div class='metric-sub'>Optimal Total Spend</div>
+        <div class='metric-value'>€{opt_cost:,.0f}</div>
+        <div class='metric-caption'>Avg Landed: €{opt_cost/demand:.2f} / unit</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-# --- PRESCRIPTIVE EXECUTIVE ALLOCATION DIRECTIVES ---
-if is_feasible:
-    with st.expander("📋 PRESCRIPTIVE SOURCING MANDATES (OPTIMAL DECISION LOGIC)", expanded=True):
-        st.markdown(
-            f"**Execution Summary:** Sourcing **{target_demand:,.0f} units** across active fulfillment hubs achieves an optimal spend of **€{total_optimal_spend:,.2f}** "
-            f"generating **€{loss_avoidance:,.2f}** in net savings vs. naive split sourcing, while locking tail-risk exposure (VaR₉₅) to **€{var_95:,.2f}**."
-        )
-        st.markdown("---")
+with k2:
+    st.markdown(f"""
+    <div class='glass-card'>
+        <div class='metric-sub'>Arbitrage Savings</div>
+        <div class='metric-value'>€{arbitrage_savings:,.0f}</div>
+        <div class='metric-caption'>vs. Naive Equal Allocation</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with k3:
+    st.markdown(f"""
+    <div class='glass-card'>
+        <div class='metric-sub'>Network Reliability</div>
+        <div class='metric-value'>{blended_reliability*100:.1f}%</div>
+        <div class='metric-caption'>Target Floor: {sla_floor*100:.1f}%</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+with k4:
+    st.markdown(f"""
+    <div class='glass-card'>
+        <div class='metric-sub'>Scope-3 Footprint</div>
+        <div class='metric-value'>{total_carbon_emitted:.1f}t</div>
+        <div class='metric-caption'>Ceiling: {carbon_cap:.1f} Metric Tons</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# --- PRESCRIPTIVE ALLOCATION DIRECTIVES ---
+st.markdown("<div class='glass-card-accent'>", unsafe_allow_html=True)
+st.markdown("<h3 style='margin-top: 0; margin-bottom: 8px; color: #E0EFBA;'>🎯 Prescriptive Executive Sourcing Directives</h3>", unsafe_allow_html=True)
+st.markdown("<p style='font-size: 0.88rem; color: #F2EEFF; margin-bottom: 14px;'>Actionable node-by-node procurement directives derived from the solved LP simplex:</p>", unsafe_allow_html=True)
+
+for _, row in topology.iterrows():
+    hub_name = row['Hub']
+    alloc = row['Allocated_Units']
+    cap = row['Capacity']
+    pct = row['Alloc_Pct']
+    
+    if pct >= 99.9:
+        badge = "<span class='badge-priority'>Priority: Max Allocation</span>"
+        desc = f"Max out capacity at <b>{cap:,.0f} units</b>. This node provides the highest marginal economic efficiency under current constraints."
+    elif pct > 0.1:
+        badge = "<span class='badge-balancing'>Balancing Node</span>"
+        desc = f"Prescribe exactly <b>{alloc:,.0f} units</b> ({pct:.1f}% capacity). Acts as the marginal buffer satisfying contractual SLA and carbon limits."
+    else:
+        badge = "<span class='badge-bypassed'>Avoid / Bypassed</span>"
+        desc = f"<b>0 units allocated</b>. Node is economically unviable due to high freight, defect risk, or carbon intensity."
         
-        for _, row in df_results.iterrows():
-            node = row["Sourcing Node"]
-            allocated = row["Allocated Units"]
-            capacity = row["Max Capacity"]
-            landed = row["True Landed (€)"]
-            utilization = (allocated / capacity) * 100 if capacity > 0 else 0
-            shadow_val = shadow_dict.get(node, 0.0)
+    st.markdown(f"""
+    <div class='directive-box'>
+        <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;'>
+            <span style='font-weight: 700; color: #F2EEFF; font-size: 0.95rem;'>{hub_name}</span>
+            {badge}
+        </div>
+        <div style='font-size: 0.85rem; color: #D4CDFF;'>{desc}</div>
+    </div>
+    """, unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
-            if allocated >= capacity and capacity > 0:
-                badge = '<span class="badge-priority">MAX ALLOCATION (100% CAPACITY)</span>'
-                rationale = (
-                    f"Order <strong>{allocated:,.0f} units</strong>. Node operates as a primary low-landed-cost workhorse (€{landed:.2f}/unit). "
-                    f"<em>Binding bottleneck: Expanding this supplier's contract capacity yields <strong>€{shadow_val:.2f}/unit</strong> in direct network savings.</em>"
-                )
-            elif allocated > 0:
-                badge = '<span class="badge-balancing">STRATEGIC BALANCING NODE</span>'
-                rationale = (
-                    f"Order <strong>{allocated:,.0f} of {capacity:,.0f} units ({utilization:.1f}% capacity)</strong> at €{landed:.2f}/unit. "
-                    f"Dispatched in precision quantity to satisfy your <strong>{int(target_service_level * 100)}% SLA reliability floor</strong> and ESG carbon limits."
-                )
-            else:
-                badge = '<span class="badge-avoid">ZERO ALLOCATION (BYPASSED)</span>'
-                rationale = (
-                    f"Order <strong>0 units</strong>. Node unreliability risk charges or carbon footprint exceed current network equilibrium thresholds."
-                )
-
-            st.markdown(f"""
-                <div class="directive-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                        <span style="font-weight: 700; color: #f0fdf4; font-size: 0.95rem;">{node}</span>
-                        {badge}
-                    </div>
-                    <div style="font-size: 0.85rem; color: #a7f3d0; line-height: 1.4;">
-                        {rationale}
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-
-st.markdown("---")
-
-# Analytics Tabs
-tab_dispatch, tab_monte_carlo, tab_pareto, tab_shadow = st.tabs([
-    "Operational Dispatch Matrix", 
-    "Stochastic Monte Carlo & Tail Risk", 
-    "Multi-Objective ESG Pareto Frontier", 
-    "Dual Shadow Price Engine"
+# --- ANALYTICAL WORKBENCH TABS ---
+tab1, tab2, tab3, tab4 = st.tabs([
+    "📊 Sourcing Matrix & ESG", 
+    "🎲 Monte Carlo VaR Tail Risk", 
+    "📈 Multi-Objective Pareto Frontier", 
+    "🔍 Dual Shadow Pricing"
 ])
 
-with tab_dispatch:
-    col_left, col_right = st.columns([1.2, 1])
+# Custom Plotly Dark Theme
+PLOTLY_TEMPLATE = {
+    "layout": {
+        "paper_bgcolor": "#1B235E",
+        "plot_bgcolor": "#161D53",
+        "font": {"color": "#F2EEFF", "family": "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto"},
+        "xaxis": {"gridcolor": "rgba(184, 169, 255, 0.15)", "zerolinecolor": "rgba(184, 169, 255, 0.2)"},
+        "yaxis": {"gridcolor": "rgba(184, 169, 255, 0.15)", "zerolinecolor": "rgba(184, 169, 255, 0.2)"}
+    }
+}
 
-    with col_left:
-        st.markdown("#### **NODE CAPACITY VS. DISPATCHED ALLOCATION**")
-        fig_util = go.Figure()
-        fig_util.add_trace(go.Bar(name="Max Node Capacity", x=df_results["Sourcing Node"], y=df_results["Max Capacity"], marker=dict(color='#133326', line=dict(color='#10b981', width=1))))
-        fig_util.add_trace(go.Bar(name="Allocated Units", x=df_results["Sourcing Node"], y=df_results["Allocated Units"], marker=dict(color='#10b981')))
-        fig_util.update_layout(barmode='group', template="plotly_dark", paper_bgcolor="#050d0a", plot_bgcolor="#081611", font=dict(family="JetBrains Mono", color="#ecfdf5"), height=320, margin=dict(l=10, r=10, t=10, b=10), yaxis=dict(gridcolor="#133326"), legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5))
-        st.plotly_chart(fig_util, use_container_width=True)
-
-    with col_right:
-        st.markdown("#### **SCOPE-3 CARBON INTENSITY SHARE (METRIC TONS)**")
-        fig_carb = go.Figure(data=[go.Pie(labels=df_results["Sourcing Node"], values=df_results["Carbon Footprint (t)"], hole=0.55, marker=dict(colors=['#10b981', '#047857', '#064e3b']))])
-        fig_carb.update_layout(template="plotly_dark", paper_bgcolor="#050d0a", font=dict(family="JetBrains Mono", color="#ecfdf5"), height=320, margin=dict(l=10, r=10, t=10, b=10), legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5))
-        st.plotly_chart(fig_carb, use_container_width=True)
-
-    st.markdown("#### **AUDIT DISPATCH LEDGER**")
-    st.dataframe(df_results, use_container_width=True, hide_index=True)
-
-with tab_monte_carlo:
-    st.markdown("#### **1,000-ITERATION STOCHASTIC TAIL-RISK DISTRIBUTION**")
-    fig_mc = go.Figure()
-    fig_mc.add_trace(go.Histogram(x=sim_costs, nbinsx=40, name="Simulated Total Cost", marker_color='#047857', opacity=0.85))
-    fig_mc.add_vline(x=total_optimal_spend, line_width=2, line_dash="dash", line_color="#10b981", annotation_text="Expected Baseline")
-    fig_mc.add_vline(x=var_95, line_width=2, line_dash="dash", line_color="#f59e0b", annotation_text="95% VaR Threshold")
-    fig_mc.add_vline(x=cvar_95, line_width=2, line_dash="dash", line_color="#ef4444", annotation_text="Conditional VaR (Expected Shortfall)")
-    fig_mc.update_layout(template="plotly_dark", paper_bgcolor="#050d0a", plot_bgcolor="#081611", font=dict(family="JetBrains Mono", color="#ecfdf5"), height=340, margin=dict(l=10, r=10, t=20, b=10), xaxis=dict(gridcolor="#133326", title="Total Procurement Outlay (€)"), yaxis=dict(gridcolor="#133326", title="Frequency"))
-    st.plotly_chart(fig_mc, use_container_width=True)
-    st.info(f"**Quant Risk Metrics:** 95% Parametric Value-at-Risk is **€{var_95:,.2f}**. In the worst 5% of disruption shocks, the Conditional VaR (Expected Shortfall) averages **€{cvar_95:,.2f}**.")
-
-with tab_pareto:
-    st.markdown("#### **MULTI-OBJECTIVE PARETO FRONTIER: COST VS. DECARBONIZATION**")
-    st.caption("Demonstrates the Efficient Frontier tradeoff: Lowering Carbon Intensity forces higher unit procurement spend.")
+# --- TAB 1: SOURCING MATRIX ---
+with tab1:
+    c_left, c_right = st.columns([3, 2])
+    with c_left:
+        st.markdown("#### Optimal Order Allocation vs. Available Capacity")
+        fig_bar = go.Figure()
+        fig_bar.add_trace(go.Bar(
+            x=topology["Hub"], y=topology["Capacity"],
+            name="Max Capacity", marker_color="rgba(184, 169, 255, 0.3)", marker_line_color="#B8A9FF", marker_line_width=1.5
+        ))
+        fig_bar.add_trace(go.Bar(
+            x=topology["Hub"], y=topology["Allocated_Units"],
+            name="Optimal Order", marker_color="#E0EFBA"
+        ))
+        fig_bar.update_layout(
+            barmode="group",
+            margin=dict(l=20, r=20, t=30, b=20),
+            height=340,
+            template=PLOTLY_TEMPLATE,
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        )
+        st.plotly_chart(fig_bar, use_container_width=True)
     
-    # Compute Pareto Curve across 10 discrete emission steps
-    pareto_points = []
-    for carb_target in np.linspace(50.0, 130.0, 10):
-        p_model = pulp.LpProblem("Pareto", pulp.LpMinimize)
-        p_vars = {s: pulp.LpVariable(f"POrder_{i}", lowBound=0, upBound=d["capacity"]) for i, (s, d) in enumerate(suppliers.items())}
-        p_model += pulp.lpSum([p_vars[s] * (d["unit_cost"] + d["freight_cost"] + (1.0 - d["reliability"]) * d["risk_penalty"]) for s, d in suppliers.items()])
-        p_model += pulp.lpSum([p_vars[s] for s in suppliers]) == target_demand
-        p_model += pulp.lpSum([p_vars[s] * d["reliability"] for s, d in suppliers.items()]) >= (target_service_level * target_demand)
-        p_model += pulp.lpSum([p_vars[s] * (d["carbon"] / 1000.0) for s, d in suppliers.items()]) <= carb_target
-        p_model.solve(pulp.PULP_CBC_CMD(msg=False))
-        if pulp.LpStatus[p_model.status] == "Optimal":
-            pareto_points.append({"Carbon Cap (t CO2e)": carb_target, "Min Landed Cost (€)": pulp.value(p_model.objective)})
+    with c_right:
+        st.markdown("#### Scope-3 Carbon Share by Hub")
+        fig_pie = px.pie(
+            topology, values="Total_Carbon_Tons", names="Hub",
+            color_discrete_sequence=["#E0EFBA", "#B8A9FF", "#8E7BE8", "#5A45BA"],
+            hole=0.45
+        )
+        fig_pie.update_layout(
+            margin=dict(l=20, r=20, t=30, b=20),
+            height=340,
+            template=PLOTLY_TEMPLATE,
+            showlegend=True,
+            legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.05)
+        )
+        st.plotly_chart(fig_pie, use_container_width=True)
 
-    df_pareto = pd.DataFrame(pareto_points)
-    if not df_pareto.empty:
-        fig_pareto = go.Figure()
-        fig_pareto.add_trace(go.Scatter(x=df_pareto["Carbon Cap (t CO2e)"], y=df_pareto["Min Landed Cost (€)"], mode='lines+markers', line=dict(color='#10b981', width=3), marker=dict(size=8, color='#f59e0b')))
-        fig_pareto.update_layout(template="plotly_dark", paper_bgcolor="#050d0a", plot_bgcolor="#081611", font=dict(family="JetBrains Mono", color="#ecfdf5"), height=340, margin=dict(l=10, r=10, t=10, b=10), xaxis=dict(gridcolor="#133326", title="Permitted Carbon Cap (Tons CO2e)"), yaxis=dict(gridcolor="#133326", title="Optimized Cost (€)"))
-        st.plotly_chart(fig_pareto, use_container_width=True)
+# --- TAB 2: MONTE CARLO RISK SIMULATION ---
+with tab2:
+    st.markdown("#### Stochastic Disruption Engine (1,000 Tail-Risk Scenarios)")
+    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Models random supplier failure shocks (Bernoulli trials) and freight rate volatility to quantify Parametric VaR and Conditional VaR (Expected Shortfall).</p>", unsafe_allow_html=True)
+    
+    np.random.seed(42)
+    n_sims = 1000
+    active_hubs = topology[topology["Allocated_Units"] > 0]
+    
+    sim_costs = np.zeros(n_sims)
+    base_landed = (active_hubs["Allocated_Units"] * (active_hubs["Base_Cost"] + active_hubs["Freight"])).sum()
+    
+    for i in range(n_sims):
+        shock_penalties = 0
+        freight_jitter = np.random.normal(0, 0.15 * active_hubs["Freight"].values)
+        
+        for idx, (_, hub_row) in enumerate(active_hubs.iterrows()):
+            failed = np.random.binomial(1, 1.0 - hub_row["Reliability"])
+            if failed:
+                shock_penalties += hub_row["Allocated_Units"] * hub_row["Penalty"] * np.random.uniform(0.3, 1.0)
+            shock_penalties += hub_row["Allocated_Units"] * freight_jitter[idx]
+            
+        sim_costs[i] = base_landed + shock_penalties
 
-with tab_shadow:
-    st.markdown("#### **DUAL SHADOW VALUE SENSITIVITY MATRIX**")
-    st.dataframe(df_shadow, use_container_width=True, hide_index=True)
+    var_95 = np.percentile(sim_costs, 95)
+    cvar_95 = sim_costs[sim_costs >= var_95].mean()
+    
+    m1, m2, m3 = st.columns(3)
+    with m1:
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Expected (Mean) Spend</div><div class='metric-value'>€{sim_costs.mean():,.0f}</div></div>""", unsafe_allow_html=True)
+    with m2:
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Parametric VaR (95%)</div><div class='metric-value' style='color: #B8A9FF;'>€{var_95:,.0f}</div></div>""", unsafe_allow_html=True)
+    with m3:
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>CVaR 95 (Worst 5% Tail Loss)</div><div class='metric-value' style='color: #FF9E9E;'>€{cvar_95:,.0f}</div></div>""", unsafe_allow_html=True)
+
+    fig_hist = go.Figure()
+    fig_hist.add_trace(go.Histogram(x=sim_costs, nbinsx=45, marker_color="#B8A9FF", opacity=0.75, name="Scenario Cost Distribution"))
+    fig_hist.add_vline(x=var_95, line_dash="dash", line_color="#E0EFBA", line_width=2.5, annotation_text=f"VaR 95: €{var_95:,.0f}", annotation_position="top left", annotation_font_color="#E0EFBA")
+    fig_hist.add_vline(x=cvar_95, line_dash="dot", line_color="#FF7878", line_width=2.5, annotation_text=f"CVaR 95: €{cvar_95:,.0f}", annotation_position="top right", annotation_font_color="#FF7878")
+    fig_hist.update_layout(
+        xaxis_title="Simulated Total Landed Sourcing Spend (€)",
+        yaxis_title="Simulation Frequency",
+        margin=dict(l=20, r=20, t=30, b=20),
+        height=320,
+        template=PLOTLY_TEMPLATE
+    )
+    st.plotly_chart(fig_hist, use_container_width=True)
+
+# --- TAB 3: ESG PARETO FRONTIER ---
+with tab3:
+    st.markdown("#### Multi-Objective ε-Constraint Pareto Frontier")
+    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Traces optimal landed cost across stepped carbon caps to reveal the exact marginal price of network decarbonization.</p>", unsafe_allow_html=True)
+    
+    cap_steps = np.linspace(45.0, 130.0, 15)
+    pareto_data = []
+    
+    for c_cap in cap_steps:
+        st_code, _, cost_val, _ = solve_sourcing(topology, demand, sla_floor, c_cap)
+        if st_code == "Optimal":
+            pareto_data.append({"Carbon_Cap_Tons": c_cap, "Optimal_Cost": cost_val})
+            
+    pareto_df = pd.DataFrame(pareto_data)
+    
+    fig_pareto = go.Figure()
+    fig_pareto.add_trace(go.Scatter(
+        x=pareto_df["Carbon_Cap_Tons"], y=pareto_df["Optimal_Cost"],
+        mode="lines+markers",
+        line=dict(color="#E0EFBA", width=3),
+        marker=dict(size=8, color="#B8A9FF", line=dict(color="#121842", width=2)),
+        name="Pareto Frontier"
+    ))
+    fig_pareto.add_trace(go.Scatter(
+        x=[total_carbon_emitted], y=[opt_cost],
+        mode="markers",
+        marker=dict(size=14, color="#FF9E9E", symbol="star"),
+        name="Current Operating Point"
+    ))
+    fig_pareto.update_layout(
+        xaxis_title="Scope-3 Carbon Cap (Metric Tons)",
+        yaxis_title="Optimal Landed Spend (€)",
+        margin=dict(l=20, r=20, t=30, b=20),
+        height=340,
+        template=PLOTLY_TEMPLATE
+    )
+    st.plotly_chart(fig_pareto, use_container_width=True)
+
+# --- TAB 4: DUAL SHADOW PRICING ---
+with tab4:
+    st.markdown("#### Constraint Dual Values & Lagrange Multipliers ($\pi_i$)")
+    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Identifies binding bottlenecks. Non-zero shadow prices indicate exact marginal system savings per unit of capacity or constraint relaxation.</p>", unsafe_allow_html=True)
+    
+    dual_rows = [
+        {"Constraint": "Network Demand Equilibrium", "Binding_Value": f"{demand:,.0f} Units", "Shadow_Price_EUR": f"€{duals.get('Demand_Constraint', 0.0):.2f} / unit", "Economic_Interpretation": "Marginal cost of fulfilling +1 additional unit of global demand."},
+        {"Constraint": "Contractual SLA Reliability Floor", "Binding_Value": f"{sla_floor*100:.1f}%", "Shadow_Price_EUR": f"€{duals.get('SLA_Constraint', 0.0):.2f} / unit", "Economic_Interpretation": "System penalty paid per 1% increment in network delivery reliability."},
+        {"Constraint": "Scope-3 Carbon Emission Budget", "Binding_Value": f"{carbon_cap:.1f} Tons", "Shadow_Price_EUR": f"€{duals.get('Carbon_Constraint', 0.0):.2f} / ton", "Economic_Interpretation": "Marginal abatement cost to reduce network emissions by 1 metric ton."}
+    ]
+    
+    st.dataframe(pd.DataFrame(dual_rows), use_container_width=True, hide_index=True)
