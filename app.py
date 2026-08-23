@@ -13,17 +13,25 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- PALETTE: #212B7B (Navy) | #B8A9FF (Steel Blue) | #F2EEFF (Alice Blue) | #E0EFBA (Lime) ---
+# --- BESPOKE PROFESSIONAL TYPOGRAPHY & PALETTE STYLING ---
 st.markdown("""
 <style>
+    /* 1. Import Professional Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+
+    /* Global Base */
     .stApp {
         background-color: #121842;
         color: #F2EEFF;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased;
     }
+    
+    /* Sidebar Styling */
     section[data-testid="stSidebar"] {
         background-color: #181F54 !important;
-        border-right: 1px solid rgba(184, 169, 255, 0.25) !important;
+        border-right: 1px solid rgba(184, 169, 255, 0.2) !important;
+        font-family: 'Inter', sans-serif !important;
     }
     section[data-testid="stSidebar"] h1, 
     section[data-testid="stSidebar"] h2, 
@@ -31,80 +39,100 @@ st.markdown("""
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] .stMarkdown {
         color: #F2EEFF !important;
+        font-family: 'Inter', sans-serif !important;
     }
+
+    /* Cards & Containers */
     .glass-card {
         background: #1B235E;
-        border: 1px solid rgba(184, 169, 255, 0.25);
-        border-radius: 10px;
+        border: 1px solid rgba(184, 169, 255, 0.22);
+        border-radius: 8px;
         padding: 16px 20px;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
     .glass-card-accent {
         background: linear-gradient(135deg, #1B235E 0%, #212B7B 100%);
         border: 1px solid #B8A9FF;
-        border-radius: 10px;
+        border-radius: 8px;
         padding: 18px 22px;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
     }
+    
+    /* Executive Metric Block (JetBrains Mono for Numerical Rigor) */
     .metric-value {
+        font-family: 'JetBrains Mono', monospace;
         font-size: 1.85rem;
         font-weight: 700;
         color: #E0EFBA;
+        letter-spacing: -0.8px;
         line-height: 1.2;
     }
     .metric-sub {
-        font-size: 0.8rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.76rem;
         color: #B8A9FF;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 0.9px;
         margin-bottom: 4px;
     }
     .metric-caption {
-        font-size: 0.78rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.76rem;
         color: #D4CDFF;
         margin-top: 4px;
     }
+
+    /* Directives & Badges */
     .directive-box {
         background: #161D53;
         border-left: 4px solid #E0EFBA;
         padding: 12px 16px;
-        border-radius: 0 8px 8px 0;
+        border-radius: 0 6px 6px 0;
         margin-bottom: 10px;
         border-top: 1px solid rgba(184, 169, 255, 0.15);
         border-right: 1px solid rgba(184, 169, 255, 0.15);
         border-bottom: 1px solid rgba(184, 169, 255, 0.15);
     }
     .badge-priority {
-        background-color: rgba(224, 239, 186, 0.18);
+        background-color: rgba(224, 239, 186, 0.16);
         color: #E0EFBA;
         border: 1px solid #E0EFBA;
         padding: 3px 8px;
         border-radius: 4px;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Inter', sans-serif;
     }
     .badge-balancing {
-        background-color: rgba(184, 169, 255, 0.2);
+        background-color: rgba(184, 169, 255, 0.18);
         color: #B8A9FF;
         border: 1px solid #B8A9FF;
         padding: 3px 8px;
         border-radius: 4px;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Inter', sans-serif;
     }
     .badge-bypassed {
-        background-color: rgba(255, 120, 120, 0.15);
+        background-color: rgba(255, 120, 120, 0.14);
         color: #FF9E9E;
         border: 1px solid #FF7878;
         padding: 3px 8px;
         border-radius: 4px;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Inter', sans-serif;
     }
+
+    /* Streamlit Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         border-bottom: 1px solid rgba(184, 169, 255, 0.2);
@@ -116,6 +144,9 @@ st.markdown("""
         padding: 8px 16px !important;
         border: 1px solid rgba(184, 169, 255, 0.2) !important;
         border-bottom: none !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.88rem !important;
+        font-weight: 600 !important;
     }
     .stTabs [aria-selected="true"] {
         background-color: #212B7B !important;
@@ -124,12 +155,17 @@ st.markdown("""
         border-bottom: 2px solid #E0EFBA !important;
         font-weight: 700 !important;
     }
+
+    /* Headings & Text */
     h1, h2, h3, h4 {
         color: #F2EEFF !important;
-        font-weight: 700;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.4px;
     }
     p, span, label {
         color: #F2EEFF;
+        font-family: 'Inter', sans-serif;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -142,8 +178,8 @@ with col_head:
 with col_badge:
     st.markdown("""
     <div style='text-align: right; padding-top: 10px;'>
-        <span style='background: #1B235E; border: 1px solid #B8A9FF; color: #E0EFBA; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;'>
-            Engine: PuLP / CBC Active
+        <span style='background: #1B235E; border: 1px solid #B8A9FF; color: #E0EFBA; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: "JetBrains Mono", monospace;'>
+            PuLP / CBC Active
         </span>
     </div>
     """, unsafe_allow_html=True)
@@ -308,14 +344,22 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🔍 Dual Shadow Pricing"
 ])
 
-# Custom Plotly Dark Theme
+# Custom Plotly Theme with JetBrains Mono / Inter Integration
 PLOTLY_TEMPLATE = {
     "layout": {
         "paper_bgcolor": "#1B235E",
         "plot_bgcolor": "#161D53",
-        "font": {"color": "#F2EEFF", "family": "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto"},
-        "xaxis": {"gridcolor": "rgba(184, 169, 255, 0.15)", "zerolinecolor": "rgba(184, 169, 255, 0.2)"},
-        "yaxis": {"gridcolor": "rgba(184, 169, 255, 0.15)", "zerolinecolor": "rgba(184, 169, 255, 0.2)"}
+        "font": {"color": "#F2EEFF", "family": "Inter, sans-serif"},
+        "xaxis": {
+            "gridcolor": "rgba(184, 169, 255, 0.15)",
+            "zerolinecolor": "rgba(184, 169, 255, 0.2)",
+            "tickfont": {"family": "JetBrains Mono, monospace", "size": 11}
+        },
+        "yaxis": {
+            "gridcolor": "rgba(184, 169, 255, 0.15)",
+            "zerolinecolor": "rgba(184, 169, 255, 0.2)",
+            "tickfont": {"family": "JetBrains Mono, monospace", "size": 11}
+        }
     }
 }
 
@@ -395,8 +439,8 @@ with tab2:
 
     fig_hist = go.Figure()
     fig_hist.add_trace(go.Histogram(x=sim_costs, nbinsx=45, marker_color="#B8A9FF", opacity=0.75, name="Scenario Cost Distribution"))
-    fig_hist.add_vline(x=var_95, line_dash="dash", line_color="#E0EFBA", line_width=2.5, annotation_text=f"VaR 95: €{var_95:,.0f}", annotation_position="top left", annotation_font_color="#E0EFBA")
-    fig_hist.add_vline(x=cvar_95, line_dash="dot", line_color="#FF7878", line_width=2.5, annotation_text=f"CVaR 95: €{cvar_95:,.0f}", annotation_position="top right", annotation_font_color="#FF7878")
+    fig_hist.add_vline(x=var_95, line_dash="dash", line_color="#E0EFBA", line_width=2.5, annotation_text=f"VaR 95: €{var_95:,.0f}", annotation_position="top left", annotation_font_color="#E0EFBA", annotation_font_family="JetBrains Mono")
+    fig_hist.add_vline(x=cvar_95, line_dash="dot", line_color="#FF7878", line_width=2.5, annotation_text=f"CVaR 95: €{cvar_95:,.0f}", annotation_position="top right", annotation_font_color="#FF7878", annotation_font_family="JetBrains Mono")
     fig_hist.update_layout(
         xaxis_title="Simulated Total Landed Sourcing Spend (€)",
         yaxis_title="Simulation Frequency",
