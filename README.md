@@ -1,121 +1,99 @@
-# Autonomous Multi-Tier Sourcing and Disruption Solver
+# ⚡ Autonomous Multi-Tier Sourcing & Disruption Solver
 
-<div align="center">
-  <img src="Dashboard1.png" alt="Operational Dispatch Matrix" width="100%" />
- Link to the Dashboard: https://supply-chain-command-center-pgzcwfma9cbbey4zo2zkyj.streamlit.app/
-</div>
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://supply-chain-command-center-pgzcwfma9cbbey4zo2zkyj.streamlit.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 
-<br/>
-
-An Operations Research (OR) and Prescriptive Analytics platform engineered to solve multi-echelon procurement allocation under capacity limits, freight volatility, contractual Service Level Agreements (SLA), and Scope-3 carbon emission ceilings.
+An enterprise-grade Prescriptive Operations Research platform that formulates a **Mixed-Integer Linear Program (MILP)** to autonomously compute optimal purchase order allocations across global multi-tier supplier hubs. Integrates contractual SLA compliance, Scope-3 carbon ceilings, stochastic Monte Carlo tail-risk simulations ($\text{VaR}_{95} / \text{CVaR}_{95}$), and dual shadow price microeconomics.
 
 ---
 
-## Architecture Overview
+## 🎬 System Overview & Live Walkthrough
 
-Traditional supply chain planning relies on static heuristic distribution or simple linear cost-ranking, which routinely overlooks disruption penalties, capacity bottlenecks, and carbon taxation. 
+### Executive Terminal & Decision Engine Demo
+https://github.com/user-attachments/assets/Dashboard_Preview.mp4
 
-This platform implements a dual-engine architecture:
-* **Deterministic Core:** A Mixed-Integer Linear Programming (MILP) optimization engine that calculates the global minimum-cost dispatch ledger.
-* **Stochastic Risk Layer:** A Monte Carlo simulation suite executing 1,000 synthetic disruption cycles to quantify parametric tail risk and structural capital exposure.
-
-###  Prescriptive Executive Decision Engine
-
-<p align="center">
-  
-
-https://github.com/user-attachments/assets/84d0d8ae-8a2a-4992-823b-c9d4749f8123
-
-
-  <video src="./Decision_maker.mp4" width="100%" autoplay loop muted playsinline style="border-radius: 8px; border: 1px solid #133326;"></video>
-</p>
-
-Unlike passive descriptive dashboards, the engine acts as an autonomous decision system:
-* **Automated Action Directives:** Converts complex LP matrix outputs into plain-English procurement orders (**Priority Max-Out**, **SLA Balancing**, or **Zero Allocation / Bypassed**).
-* **Eliminates Human Bias:** Replaces naive equal-split ordering with mathematically optimal volume distribution.
-* **Bottleneck ROI via Shadow Pricing:** Calculates the exact dollar savings achieved for every single unit of expanded contract capacity ($\pi = \partial \mathcal{L}^* / \partial K_i$).
----
-
-## System Modules
-
-### 1. Operational Dispatch Matrix and Capacity Analysis
-Computes optimal unit distribution across fulfillment hubs while respecting individual node capacity ceilings and dynamic demand constraints.
-
-<div align="center">
-  <img src="Dashboard1.png" alt="Operational Dispatch Matrix" width="90%" />
-</div>
-
-<br/>
-
-### 2. Stochastic Tail-Risk Engine (Monte Carlo VaR)
-Applies Bernoulli disruption trials and normal freight volatility across 1,000 iterations to evaluate downside operational risk. It generates Parametric Value-at-Risk ($VaR_{95}$) and Conditional Value-at-Risk ($CVaR_{95}$ / Expected Shortfall) to measure extreme loss scenarios.
-
-<div align="center">
-  <img src="Dashboard2.png" alt="Monte Carlo Simulation" width="90%" />
-</div>
-
-<br/>
-
-### 3. Multi-Objective ESG Pareto Frontier
-Implements an $\epsilon$-constraint formulation to plot the convex efficient frontier between landed procurement costs and Scope-3 decarbonization mandates, demonstrating the marginal financial cost per metric ton of carbon avoided.
-
-<div align="center">
-  <img src="Dashboard3.png" alt="Multi-Objective Pareto Frontier" width="90%" />
-</div>
-
-<br/>
-
-### 4. Dual Shadow Price Sensitivity Matrix
-Extracts Lagrange multipliers ($\pi = \frac{\partial \mathcal{L}^*}{\partial b_i}$) directly from binding constraint surfaces. This isolates operational bottlenecks and provides procurement leads with the exact economic return per unit of expanded supplier capacity.
-
-<div align="center">
-  <img src="Dashboard4.png" alt="Dual Shadow Price Engine" width="90%" />
-</div>
+> **Prescriptive Decision Directives:** Converts complex linear programming matrices into clear executive procurement commands (`Priority Max-Out`, `SLA Balancing`, or `Bypassed`) alongside binding bottleneck shadow values ($\pi_i$).
 
 ---
 
-## Mathematical Formulation
+## 📸 Platform Previews
 
-### Objective Function
-Minimize total landed cost across all sourcing nodes $N$, accounting for sticker price, freight surcharges, and expected unreliability losses:
+### 1. Executive Cockpit & Prescriptive Directives
+![Executive Cockpit](Preview.png)
 
-$$\min_{x} \sum_{i=1}^{N} x_i \cdot \left[ C_{\text{base}, i} + C_{\text{freight}, i} + (1 - R_i) \cdot P_i \right]$$
+### 2. Sourcing Matrix & Scope-3 ESG Allocations
+![Sourcing Matrix](Preview1.png)
+
+### 3. Stochastic Monte Carlo Disruption Engine ($\text{VaR}_{95} / \text{CVaR}_{95}$)
+![Monte Carlo Risk](Preview2.png)
+
+---
+
+## 📌 Executive Architecture & Problem Framing
+
+Traditional supply chain planning relies on descriptive dashboards or heuristic rules of thumb (e.g., naive 33/33/33 splits) that fail to capture the trade-offs between landed unit cost, stochastic disruption penalties, supplier capacities, and sustainability caps.
+
+This system combines:
+1. **Mathematical Optimization (PuLP / CBC Solver):** Global cost minimization under strict multi-dimensional constraints.
+2. **Prescriptive Action Layer:** Translates raw LP simplex outputs into direct supplier order mandates.
+3. **Dual Economic Shadow Pricing ($\pi$):** Quantifies the exact bottom-line return on investment for expanding supplier capacities or relaxing SLAs.
+4. **Stochastic Stress Testing (Monte Carlo):** Simulates 1,000 supply disruption scenarios to compute Parametric Value-at-Risk ($\text{VaR}_{95}$) and Conditional Value-at-Risk ($\text{CVaR}_{95}$).
+5. **Multi-Objective ESG Pareto Frontier:** Computes the marginal abatement cost curve across stepped carbon caps.
+
+---
+
+## 🧮 Mathematical Formulation
+
+### 1. Objective Function (Total Landed Spend Minimization)
+$$\min_{x_i} \sum_{i=1}^{N} x_i \cdot \left[ C_{\text{base}, i} + C_{\text{freight}, i} + (1 - R_i) \cdot P_i \right]$$
 
 Where:
-* $x_i$: Order quantity allocated to node $i$
-* $C_{\text{base}, i}$: Unit purchase cost at node $i$
-* $C_{\text{freight}, i}$: Unit logistics and transit cost
-* $R_i$: Historical reliability coefficient ($R_i \in [0, 1]$)
-* $P_i$: Contractual disruption and emergency expedite penalty
+* $x_i \ge 0$: Continuous volume allocated to supplier hub $i$.
+* $C_{\text{base}, i}$: Unit base purchase price.
+* $C_{\text{freight}, i}$: Unit freight surcharge (including global macroeconomic shock adders).
+* $R_i \in [0, 1]$: Historical fulfillment reliability rate.
+* $P_i$: Emergency defect / delay recovery penalty per unit.
+* $(1 - R_i) \cdot P_i$: Expected disruption risk charge per unit.
 
-### System Constraints
+### 2. Operational & Environmental Constraints
 
 * **Demand Equilibrium:**
   $$\sum_{i=1}^{N} x_i = D$$
-
-* **Node Capacity Ceilings:**
+* **Plant Capacity Boundaries:**
   $$0 \le x_i \le K_i \quad \forall i \in \{1, \dots, N\}$$
-
-* **Contractual Service Level Floor (SLA):**
-  $$\frac{\sum_{i=1}^{N} R_i \cdot x_i}{D} \ge \alpha_{\text{SLA}}$$
-
-* **Scope-3 Carbon Emission Budget:**
-  $$\sum_{i=1}^{N} \left( \frac{E_i}{1000} \cdot x_i \right) \le B_{\text{CO}_2}$$
+* **Contractual SLA Reliability Floor:**
+  $$\frac{\sum_{i=1}^{N} x_i \cdot R_i}{D} \ge \alpha_{\text{SLA}}$$
+* **Scope-3 Carbon Emissions Budget:**
+  $$\sum_{i=1}^{N} x_i \cdot \left(\frac{E_i}{1000}\right) \le B_{\text{CO}_2}$$
 
 ---
 
-## Core Quantitative Metrics
+## 🚀 Key Modules
 
-* **Optimized Network Spend:** The global minimum landed cost determined by the branch-and-cut solver.
-* **Capital Arbitrage:** Net cash savings generated against a status-quo equal-split baseline across all active nodes.
-* **Parametric $VaR_{95}$:** The maximum expected total procurement outlay at the 95th percentile under simulated supply-shock conditions.
-* **Conditional $VaR_{95}$ ($CVaR_{95}$):** The expected average procurement outlay in the worst 5% tail disruption scenarios.
-* **Marginal Shadow Value ($\pi_i$):** Instantaneous cost reduction achieved per +1 unit relaxation of supplier capacity $K_i$.
+| Module | Engine | Description |
+| :--- | :--- | :--- |
+| **Prescriptive Directives** | Simplex State Classifier | Classifies nodes into `Priority (100% Max)`, `Balancing (Partial)`, or `Bypassed (0%)` to eliminate human ordering bias. |
+| **Dual Shadow Prices** | Lagrangian Multipliers ($\pi_i$) | Identifies binding bottlenecks and calculates the marginal dollar ROI per unit of capacity expansion ($\pi_i = \frac{\partial \mathcal{L}^*}{\partial K_i}$). |
+| **Monte Carlo Risk** | Stochastic Engine (1,000 Iterations) | Shocks freight costs $\mathcal{N}(0, \sigma^2)$ and models Bernoulli outage shocks $S_i \sim \text{Bernoulli}(1 - R_i)$ to compute $\text{VaR}_{95}$ and $\text{CVaR}_{95}$. |
+| **ESG Pareto Frontier** | $\epsilon$-Constraint Method | Solves across 15 stepped carbon ceilings to map the exact marginal abatement trade-off between procurement cost and carbon emissions. |
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-* **Mathematical Optimization:** PuLP (COIN-OR Branch & Cut Solver)
-* **Probabilistic & Numerical Computing:** NumPy, Pandas
-* **Visual Analytics & UI:** Streamlit, Plotly Graph Objects
+* **Language:** Python 3.10+
+* **Linear Programming / MILP:** `PuLP` (COIN-OR CBC Solver)
+* **Statistical Simulation:** `NumPy`
+* **Data Transformation:** `Pandas`
+* **Data Visualization:** `Plotly Graph Objects`, `Plotly Express`
+* **Web UI & Deployment:** `Streamlit Cloud`
+
+---
+
+## 📦 Local Installation & Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/shuklasamyak1/supply-chain-command-center.git](https://github.com/shuklasamyak1/supply-chain-command-center.git)
+   cd supply-chain-command-center
