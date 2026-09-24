@@ -413,7 +413,7 @@ with tab1:
 # --- TAB 2: MONTE CARLO RISK SIMULATION ---
 with tab2:
     st.markdown("#### Stochastic Disruption Engine (1,000 Tail-Risk Scenarios)")
-    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Models random supplier failure shocks (Bernoulli trials) and freight rate volatility to quantify Parametric VaR and Conditional VaR (Expected Shortfall).</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Models random supplier failure shocks (Bernoulli trials) and freight rate volatility to quantify Monte Carlo VaR and Conditional VaR (Expected Shortfall).</p>", unsafe_allow_html=True)
     
     np.random.seed(42)
     n_sims = 1000
@@ -441,7 +441,7 @@ with tab2:
     with m1:
         st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Expected (Mean) Spend</div><div class='metric-value'>€{sim_costs.mean():,.0f}</div></div>""", unsafe_allow_html=True)
     with m2:
-        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Parametric VaR (95%)</div><div class='metric-value' style='color: #B8A9FF;'>€{var_95:,.0f}</div></div>""", unsafe_allow_html=True)
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Monte Carlo VaR (95%)</div><div class='metric-value' style='color: #B8A9FF;'>€{var_95:,.0f}</div></div>""", unsafe_allow_html=True)
     with m3:
         st.markdown(f"""<div class='glass-card'><div class='metric-sub'>CVaR 95 (Worst 5% Tail Loss)</div><div class='metric-value' style='color: #FF9E9E;'>€{cvar_95:,.0f}</div></div>""", unsafe_allow_html=True)
 
