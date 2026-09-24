@@ -174,7 +174,7 @@ st.markdown("""
 col_head, col_badge = st.columns([4, 1])
 with col_head:
     st.markdown("<h1 style='margin-bottom: 0px;'>⚡ Autonomous Multi-Tier Sourcing & Disruption Solver</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #B8A9FF; font-size: 0.95rem; margin-top: 2px;'>Prescriptive MILP Optimizer with Dual Economic Shadow Values & Stochastic Tail-Risk Stress Engine</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #B8A9FF; font-size: 0.95rem; margin-top: 2px;'>Prescriptive Optimization with LP Relaxation Duals & Stochastic Monte Carlo Tail-Risk Stress Engine</p>", unsafe_allow_html=True)
 with col_badge:
     st.markdown("""
     <div style='text-align: right; padding-top: 10px;'>
@@ -213,12 +213,12 @@ topology = edited_df.copy()
 topology["Freight"] = topology["Freight"] + freight_shock
 topology["Total_Landed_Expected"] = topology["Base_Cost"] + topology["Freight"] + ((1.0 - topology["Reliability"]) * topology["Penalty"])
 
-# --- CORE OPTIMIZATION ENGINE (PuLP MILP) ---
+# --- CORE OPTIMIZATION ENGINE (PuLP Linear / Continuous Program) ---
 def solve_sourcing(df, total_demand, min_sla, max_carbon):
     prob = pulp.LpProblem("Sourcing_Optimization", pulp.LpMinimize)
     hubs = df["Hub"].tolist()
     
-    # Decision Variables
+    # Decision Variables: Continuous dispatch allocations
     x = {h: pulp.LpVariable(f"Alloc_{h}", lowBound=0, upBound=float(df.loc[df["Hub"] == h, "Capacity"].values[0]), cat="Continuous") for h in hubs}
     
     # Objective: Minimize Landed Cost + Expected Disruption Risk
@@ -235,7 +235,7 @@ def solve_sourcing(df, total_demand, min_sla, max_carbon):
     status = pulp.LpStatus[prob.status]
     allocations = {h: x[h].varValue if x[h].varValue is not None else 0.0 for h in hubs}
     
-    # Extract Shadow Prices (Duals)
+    # Extract Continuous Simplex Duals (Shadow Prices)
     shadow_prices = {}
     for name, c in prob.constraints.items():
         shadow_prices[name] = c.pi if c.pi is not None else 0.0
@@ -260,12 +260,9 @@ total_carbon_emitted = topology["Total_Carbon_Tons"].sum()
 blended_reliability = (topology["Allocated_Units"] * topology["Reliability"]).sum() / demand
 
 # Status Quo Benchmark (Enterprise Status-Quo Baseline)
-# Computes pro-rata demand dispatch across suppliers vs optimal MILP
 avg_network_unit_cost = topology["Total_Landed_Expected"].mean()
 naive_spend = demand * avg_network_unit_cost
 
-# If naive spend equals or falls below optimal due to tight environmental compliance,
-# benchmark against the conservative high-compliance sourcing strategy
 if naive_spend <= opt_cost:
     conservative_unit_cost = topology.sort_values(by="Reliability", ascending=False)["Total_Landed_Expected"].iloc[0]
     naive_spend = demand * conservative_unit_cost
@@ -412,8 +409,8 @@ with tab1:
 
 # --- TAB 2: MONTE CARLO RISK SIMULATION ---
 with tab2:
-    st.markdown("#### Stochastic Disruption Engine (1,000 Tail-Risk Scenarios)")
-    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Models random supplier failure shocks (Bernoulli trials) and freight rate volatility to quantify Monte Carlo VaR and Conditional VaR (Expected Shortfall).</p>", unsafe_allow_html=True)
+    st.markdown("#### Stochastic Disruption Engine (1,000 Tail-Risk Trials)")
+    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Simulates Bernoulli failure shocks across hubs alongside Gaussian freight rate volatility to derive empirical Monte Carlo Value-at-Risk (VaR₉₅) and Conditional VaR (Expected Shortfall).</p>", unsafe_allow_html=True)
     
     np.random.seed(42)
     n_sims = 1000
@@ -443,14 +440,14 @@ with tab2:
     with m2:
         st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Monte Carlo VaR (95%)</div><div class='metric-value' style='color: #B8A9FF;'>€{var_95:,.0f}</div></div>""", unsafe_allow_html=True)
     with m3:
-        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>CVaR 95 (Worst 5% Tail Loss)</div><div class='metric-value' style='color: #FF9E9E;'>€{cvar_95:,.0f}</div></div>""", unsafe_allow_html=True)
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>CVaR 95 (Worst 5% Expected Loss)</div><div class='metric-value' style='color: #FF9E9E;'>€{cvar_95:,.0f}</div></div>""", unsafe_allow_html=True)
 
     fig_hist = go.Figure()
     fig_hist.add_trace(go.Histogram(x=sim_costs, nbinsx=45, marker_color="#B8A9FF", opacity=0.75, name="Scenario Cost Distribution"))
-    fig_hist.add_vline(x=var_95, line_dash="dash", line_color="#E0EFBA", line_width=2.5, annotation_text=f"VaR 95: €{var_95:,.0f}", annotation_position="top left", annotation_font_color="#E0EFBA", annotation_font_family="JetBrains Mono")
+    fig_hist.add_vline(x=var_95, line_dash="dash", line_color="#E0EFBA", line_width=2.5, annotation_text=f"MC VaR 95: €{var_95:,.0f}", annotation_position="top left", annotation_font_color="#E0EFBA", annotation_font_family="JetBrains Mono")
     fig_hist.add_vline(x=cvar_95, line_dash="dot", line_color="#FF7878", line_width=2.5, annotation_text=f"CVaR 95: €{cvar_95:,.0f}", annotation_position="top right", annotation_font_color="#FF7878", annotation_font_family="JetBrains Mono")
     fig_hist.update_layout(
-        xaxis_title="Simulated Total Landed Sourcing Spend (€)",
+        xaxis_title="Empirical Simulated Landed Spend (€)",
         yaxis_title="Simulation Frequency",
         margin=dict(l=20, r=20, t=30, b=20),
         height=320,
@@ -498,13 +495,43 @@ with tab3:
 
 # --- TAB 4: DUAL SHADOW PRICING ---
 with tab4:
-    st.markdown("#### Constraint Dual Values & Lagrange Multipliers ($\pi_i$)")
-    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Identifies binding bottlenecks. Non-zero shadow prices indicate exact marginal system savings per unit of capacity or constraint relaxation.</p>", unsafe_allow_html=True)
+    st.markdown("#### Constraint Dual Values & Sensitivity (Continuous LP Relaxation)")
+    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Dual shadow prices (π) extracted from the solved continuous simplex relaxation. Quantifies the exact marginal economic value of relaxing constraints or relieving network bottlenecks.</p>", unsafe_allow_html=True)
     
+    demand_dual = duals.get("Demand_Constraint", 0.0)
+    sla_dual = duals.get("SLA_Constraint", 0.0)
+    carbon_dual = duals.get("Carbon_Constraint", 0.0)
+
+    # Dynamic interpretation adhering to complementary slackness
+    if abs(sla_dual) < 1e-4:
+        sla_interp = "€0.00/unit — Non-binding constraint (slack exists; marginal relaxation provides no objective cost reduction)."
+    else:
+        sla_interp = f"Marginal penalty paid per unit of increased network reliability requirement: €{abs(sla_dual):.2f} / unit."
+
+    if abs(carbon_dual) < 1e-4:
+        carbon_interp = "€0.00/ton — Non-binding carbon cap (emissions operate within budget; loosening cap has zero cost impact)."
+    else:
+        carbon_interp = f"Solver dual: {carbon_dual:,.2f} €/t. Economic Interpretation: Tightening the carbon cap by 1 metric ton increases minimum network cost by €{abs(carbon_dual):,.2f}."
+
     dual_rows = [
-        {"Constraint": "Network Demand Equilibrium", "Binding_Value": f"{demand:,.0f} Units", "Shadow_Price_EUR": f"€{duals.get('Demand_Constraint', 0.0):.2f} / unit", "Economic_Interpretation": "Marginal cost of fulfilling +1 additional unit of global demand."},
-        {"Constraint": "Contractual SLA Reliability Floor", "Binding_Value": f"{sla_floor*100:.1f}%", "Shadow_Price_EUR": f"€{duals.get('SLA_Constraint', 0.0):.2f} / unit", "Economic_Interpretation": "System penalty paid per 1% increment in network delivery reliability."},
-        {"Constraint": "Scope-3 Carbon Emission Budget", "Binding_Value": f"{carbon_cap:.1f} Tons", "Shadow_Price_EUR": f"€{duals.get('Carbon_Constraint', 0.0):.2f} / ton", "Economic_Interpretation": "Marginal abatement cost to reduce network emissions by 1 metric ton."}
+        {
+            "Constraint": "Network Demand Equilibrium",
+            "Binding_Level": f"{demand:,.0f} Units",
+            "Shadow_Price_EUR": f"€{demand_dual:.2f} / unit",
+            "Economic_Interpretation": "Marginal system landed cost of fulfilling +1 additional unit of customer demand."
+        },
+        {
+            "Constraint": "Contractual SLA Floor",
+            "Binding_Level": f"{sla_floor*100:.1f}%",
+            "Shadow_Price_EUR": f"€{sla_dual:.2f} / unit",
+            "Economic_Interpretation": sla_interp
+        },
+        {
+            "Constraint": "Scope-3 Carbon Cap",
+            "Binding_Level": f"{carbon_cap:.1f} Tons",
+            "Shadow_Price_EUR": f"€{carbon_dual:.2f} / ton",
+            "Economic_Interpretation": carbon_interp
+        }
     ]
     
     st.dataframe(pd.DataFrame(dual_rows), use_container_width=True, hide_index=True)
