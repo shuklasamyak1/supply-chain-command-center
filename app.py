@@ -213,21 +213,18 @@ topology = edited_df.copy()
 topology["Freight"] = topology["Freight"] + freight_shock
 topology["Total_Landed_Expected"] = topology["Base_Cost"] + topology["Freight"] + ((1.0 - topology["Reliability"]) * topology["Penalty"])
 
-# --- CORE OPTIMIZATION ENGINE (PuLP Linear / Continuous Program) ---
+# --- CORE OPTIMIZATION ENGINE ---
 def solve_sourcing(df, total_demand, min_sla, max_carbon):
     prob = pulp.LpProblem("Sourcing_Optimization", pulp.LpMinimize)
     hubs = df["Hub"].tolist()
     
-    # Decision Variables: Continuous dispatch allocations using formal LpContinuous constant
-    x = {}
+    # Use robust dictionary construction compatible across PuLP versions
+    x = pulp.LpVariable.dicts("Alloc", hubs, lowBound=0.0)
+    
+    # Apply upper bound capacity constraints
     for h in hubs:
-        hub_cap = float(df.loc[df["Hub"] == h, "Capacity"].values[0])
-        x[h] = pulp.LpVariable(
-            name=f"Alloc_{h}",
-            lowBound=0.0,
-            upBound=hub_cap,
-            cat=pulp.LpContinuous
-        )
+        cap_val = float(df.loc[df["Hub"] == h, "Capacity"].values[0])
+        prob += x[h] <= cap_val, f"Cap_{h}"
     
     # Objective: Minimize Landed Cost + Expected Disruption Risk
     prob += pulp.lpSum([x[h] * float(df.loc[df["Hub"] == h, "Total_Landed_Expected"].values[0]) for h in hubs])
