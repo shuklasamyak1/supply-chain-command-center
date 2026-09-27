@@ -218,29 +218,37 @@ def solve_sourcing(df, total_demand, min_sla, max_carbon):
     prob = pulp.LpProblem("Sourcing_Optimization", pulp.LpMinimize)
     hubs = df["Hub"].tolist()
     
-    # Decision Variables: Continuous dispatch allocations
-    x = {h: pulp.LpVariable(f"Alloc_{h}", lowBound=0, upBound=float(df.loc[df["Hub"] == h, "Capacity"].values[0]), cat="Continuous") for h in hubs}
+    # Decision Variables: Continuous dispatch allocations using formal LpContinuous constant
+    x = {}
+    for h in hubs:
+        hub_cap = float(df.loc[df["Hub"] == h, "Capacity"].values[0])
+        x[h] = pulp.LpVariable(
+            name=f"Alloc_{h}",
+            lowBound=0.0,
+            upBound=hub_cap,
+            cat=pulp.LpContinuous
+        )
     
     # Objective: Minimize Landed Cost + Expected Disruption Risk
     prob += pulp.lpSum([x[h] * float(df.loc[df["Hub"] == h, "Total_Landed_Expected"].values[0]) for h in hubs])
     
     # Constraints
-    prob += pulp.lpSum([x[h] for h in hubs]) == total_demand, "Demand_Constraint"
-    prob += pulp.lpSum([x[h] * float(df.loc[df["Hub"] == h, "Reliability"].values[0]) for h in hubs]) >= total_demand * min_sla, "SLA_Constraint"
-    prob += pulp.lpSum([x[h] * (float(df.loc[df["Hub"] == h, "Carbon_kg"].values[0]) / 1000.0) for h in hubs]) <= max_carbon, "Carbon_Constraint"
+    prob += pulp.lpSum([x[h] for h in hubs]) == float(total_demand), "Demand_Constraint"
+    prob += pulp.lpSum([x[h] * float(df.loc[df["Hub"] == h, "Reliability"].values[0]) for h in hubs]) >= float(total_demand * min_sla), "SLA_Constraint"
+    prob += pulp.lpSum([x[h] * (float(df.loc[df["Hub"] == h, "Carbon_kg"].values[0]) / 1000.0) for h in hubs]) <= float(max_carbon), "Carbon_Constraint"
     
     solver = pulp.PULP_CBC_CMD(msg=0)
     prob.solve(solver)
     
     status = pulp.LpStatus[prob.status]
-    allocations = {h: x[h].varValue if x[h].varValue is not None else 0.0 for h in hubs}
+    allocations = {h: float(x[h].varValue) if x[h].varValue is not None else 0.0 for h in hubs}
     
     # Extract Continuous Simplex Duals (Shadow Prices)
     shadow_prices = {}
     for name, c in prob.constraints.items():
-        shadow_prices[name] = c.pi if c.pi is not None else 0.0
+        shadow_prices[name] = float(c.pi) if c.pi is not None else 0.0
         
-    return status, allocations, pulp.value(prob.objective), shadow_prices
+    return status, allocations, float(pulp.value(prob.objective) or 0.0), shadow_prices
 
 opt_status, alloc_dict, opt_cost, duals = solve_sourcing(topology, demand, sla_floor, carbon_cap)
 
@@ -256,16 +264,16 @@ topology["Total_Carbon_Tons"] = (topology["Allocated_Units"] * topology["Carbon_
 topology["Total_Spend_EUR"] = topology["Allocated_Units"] * topology["Total_Landed_Expected"]
 
 # Executive Metrics
-total_carbon_emitted = topology["Total_Carbon_Tons"].sum()
-blended_reliability = (topology["Allocated_Units"] * topology["Reliability"]).sum() / demand
+total_carbon_emitted = float(topology["Total_Carbon_Tons"].sum())
+blended_reliability = float((topology["Allocated_Units"] * topology["Reliability"]).sum() / demand)
 
 # Status Quo Benchmark (Enterprise Status-Quo Baseline)
-avg_network_unit_cost = topology["Total_Landed_Expected"].mean()
-naive_spend = demand * avg_network_unit_cost
+avg_network_unit_cost = float(topology["Total_Landed_Expected"].mean())
+naive_spend = float(demand * avg_network_unit_cost)
 
 if naive_spend <= opt_cost:
-    conservative_unit_cost = topology.sort_values(by="Reliability", ascending=False)["Total_Landed_Expected"].iloc[0]
-    naive_spend = demand * conservative_unit_cost
+    conservative_unit_cost = float(topology.sort_values(by="Reliability", ascending=False)["Total_Landed_Expected"].iloc[0])
+    naive_spend = float(demand * conservative_unit_cost)
 
 arbitrage_savings = max(0.0, naive_spend - opt_cost)
 
@@ -417,22 +425,22 @@ with tab2:
     active_hubs = topology[topology["Allocated_Units"] > 0]
     
     sim_costs = np.zeros(n_sims)
-    base_landed = (active_hubs["Allocated_Units"] * (active_hubs["Base_Cost"] + active_hubs["Freight"])).sum()
+    base_landed = float((active_hubs["Allocated_Units"] * (active_hubs["Base_Cost"] + active_hubs["Freight"])).sum())
     
     for i in range(n_sims):
-        shock_penalties = 0
+        shock_penalties = 0.0
         freight_jitter = np.random.normal(0, 0.15 * active_hubs["Freight"].values)
         
         for idx, (_, hub_row) in enumerate(active_hubs.iterrows()):
-            failed = np.random.binomial(1, 1.0 - hub_row["Reliability"])
+            failed = np.random.binomial(1, 1.0 - float(hub_row["Reliability"]))
             if failed:
-                shock_penalties += hub_row["Allocated_Units"] * hub_row["Penalty"] * np.random.uniform(0.3, 1.0)
-            shock_penalties += hub_row["Allocated_Units"] * freight_jitter[idx]
+                shock_penalties += float(hub_row["Allocated_Units"]) * float(hub_row["Penalty"]) * np.random.uniform(0.3, 1.0)
+            shock_penalties += float(hub_row["Allocated_Units"]) * freight_jitter[idx]
             
         sim_costs[i] = base_landed + shock_penalties
 
-    var_95 = np.percentile(sim_costs, 95)
-    cvar_95 = sim_costs[sim_costs >= var_95].mean()
+    var_95 = float(np.percentile(sim_costs, 95))
+    cvar_95 = float(sim_costs[sim_costs >= var_95].mean())
     
     m1, m2, m3 = st.columns(3)
     with m1:
@@ -498,9 +506,9 @@ with tab4:
     st.markdown("#### Constraint Dual Values & Sensitivity (Continuous LP Relaxation)")
     st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Dual shadow prices (π) extracted from the solved continuous simplex relaxation. Quantifies the exact marginal economic value of relaxing constraints or relieving network bottlenecks.</p>", unsafe_allow_html=True)
     
-    demand_dual = duals.get("Demand_Constraint", 0.0)
-    sla_dual = duals.get("SLA_Constraint", 0.0)
-    carbon_dual = duals.get("Carbon_Constraint", 0.0)
+    demand_dual = float(duals.get("Demand_Constraint", 0.0))
+    sla_dual = float(duals.get("SLA_Constraint", 0.0))
+    carbon_dual = float(duals.get("Carbon_Constraint", 0.0))
 
     # Dynamic interpretation adhering to complementary slackness
     if abs(sla_dual) < 1e-4:
