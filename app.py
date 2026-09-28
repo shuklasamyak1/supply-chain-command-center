@@ -12,12 +12,12 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- FRENCH INSTITUTIONAL PALETTE & BULLETPROOF WIDGET OVERRIDES ---
+# --- FRENCH INSTITUTIONAL LIGHT PALETTE & CLEAN WIDGET CONTROLS ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
 
-    /* 1. Global CSS Variables: Overrides Streamlit Native Engine */
+    /* 1. Global App Canvas */
     :root, .stApp {
         --primary-color: #0070AD !important;
         background-color: #F8FAFC !important;
@@ -26,39 +26,54 @@ st.markdown("""
         -webkit-font-smoothing: antialiased;
     }
 
-    /* 2. Deep Navy Executive Sidebar */
+    /* 2. Enterprise Light-Slate Sidebar (Guarantees Total Legibility) */
     section[data-testid="stSidebar"] {
-        background-color: #0F172A !important;
-        border-right: 1px solid #1E293B !important;
+        background-color: #F1F5F9 !important;
+        border-right: 1px solid #E2E8F0 !important;
     }
     
-    /* Input Field Labels */
+    /* Sidebar Headings */
+    .sidebar-heading {
+        color: #0F172A !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 1.05rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.2px !important;
+        margin-top: 10px !important;
+        margin-bottom: 12px !important;
+        text-transform: uppercase;
+        font-size: 0.82rem !important;
+        letter-spacing: 0.8px !important;
+    }
+
+    /* Sidebar Labels */
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] label p,
     section[data-testid="stSidebar"] label span {
-        color: #FFFFFF !important;
-        font-size: 0.90rem !important;
+        color: #0F172A !important;
+        font-size: 0.88rem !important;
         font-weight: 600 !important;
     }
 
-    /* Slider Values */
+    /* Slider Numerical Values */
     section[data-testid="stSidebar"] [data-testid="stSlider"] div,
     section[data-testid="stSidebar"] [data-testid="stSlider"] span,
     section[data-testid="stSidebar"] [data-testid="stSlider"] p {
-        color: #F8FAFC !important;
+        color: #0F172A !important;
+        font-family: 'JetBrains Mono', monospace !important;
     }
 
     /* Slider Min / Max Labels */
     section[data-testid="stSidebar"] [data-testid="stTickBarMin"],
     section[data-testid="stSidebar"] [data-testid="stTickBarMax"],
     section[data-testid="stSidebar"] div[data-testid="stTickBar"] div {
-        color: #94A3B8 !important;
+        color: #64748B !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 0.74rem !important;
         font-weight: 600 !important;
     }
 
-    /* Current Slider Value Box */
+    /* Slider Value Badge */
     section[data-testid="stSidebar"] div[data-testid="stThumbValue"] {
         background-color: #0070AD !important;
         color: #FFFFFF !important;
@@ -69,17 +84,17 @@ st.markdown("""
         padding: 2px 6px !important;
     }
 
-    /* Slider Track & Thumb */
+    /* Slider Controls: Track & Thumb in Capgemini Blue */
     section[data-testid="stSidebar"] div[data-baseweb="slider"] div[role="slider"] {
         background-color: #0070AD !important;
         border: 2px solid #FFFFFF !important;
-        box-shadow: 0 0 0 2px rgba(0, 112, 173, 0.5) !important;
+        box-shadow: 0 0 0 2px rgba(0, 112, 173, 0.3) !important;
     }
     section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div > div {
         background: #0070AD !important;
     }
     section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div {
-        background: #334155 !important;
+        background: #CBD5E1 !important;
     }
 
     /* 3. Executive Metric Cards */
@@ -197,9 +212,8 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* 6. Main Canvas Typography */
-    .main h1, .main h2, .main h3, .main h4,
-    [data-testid="stMain"] h1, [data-testid="stMain"] h2, [data-testid="stMain"] h3, [data-testid="stMain"] h4 {
+    /* 6. Typography */
+    h1, h2, h3, h4 {
         color: #0F172A !important;
         font-family: 'Inter', sans-serif !important;
         font-weight: 800 !important;
@@ -236,20 +250,14 @@ default_nodes = pd.DataFrame([
 
 # --- SIDEBAR: PARAMETERS ---
 with st.sidebar:
-    st.markdown(
-        "<div style='color: #FFFFFF !important; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.2px; margin-top: 10px; margin-bottom: 12px; font-family: Inter, sans-serif;'>1. Operational Targets</div>",
-        unsafe_allow_html=True
-    )
+    st.markdown("<div class='sidebar-heading'>1. Operational Targets</div>", unsafe_allow_html=True)
     demand = st.slider("Target Network Demand (Units)", min_value=3000, max_value=15000, value=10000, step=500)
     sla_floor = st.slider("Contractual SLA Floor (Min %)", min_value=0.70, max_value=0.99, value=0.88, step=0.01, format="%.2f")
     carbon_cap = st.slider("Scope-3 Carbon Cap (Metric Tons)", min_value=30.0, max_value=150.0, value=90.0, step=5.0)
     
-    st.markdown("<hr style='border: none; border-top: 1px solid #1E293B; margin: 24px 0;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: none; border-top: 1px solid #CBD5E1; margin: 24px 0;'>", unsafe_allow_html=True)
     
-    st.markdown(
-        "<div style='color: #FFFFFF !important; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.2px; margin-bottom: 12px; font-family: Inter, sans-serif;'>2. Macro Surcharges</div>",
-        unsafe_allow_html=True
-    )
+    st.markdown("<div class='sidebar-heading'>2. Macro Surcharges</div>", unsafe_allow_html=True)
     freight_shock = st.slider("Global Freight Shock Adder (€/unit)", min_value=0.0, max_value=10.0, value=0.0, step=0.5)
 
 # --- EDITABLE NETWORK TOPOLOGY ---
