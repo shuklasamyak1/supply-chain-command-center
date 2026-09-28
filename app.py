@@ -362,8 +362,7 @@ with k4:
     """, unsafe_allow_html=True)
 
 # --- PRESCRIPTIVE ALLOCATION DIRECTIVES ---
-st.markdown("<div class='glass-card-accent'>", unsafe_allow_html=True)
-st.markdown("<h3 style='margin-top: 0; margin-bottom: 6px; color: #0F172A;'>Prescriptive Executive Sourcing Directives</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='margin-top: 14px; margin-bottom: 6px; color: #0F172A;'>Prescriptive Executive Sourcing Directives</h3>", unsafe_allow_html=True)
 st.markdown("<p style='font-size: 0.88rem; color: #64748B; margin-bottom: 16px;'>Actionable node-by-node procurement directives derived from the solved LP simplex:</p>", unsafe_allow_html=True)
 
 for _, row in topology.iterrows():
@@ -391,7 +390,6 @@ for _, row in topology.iterrows():
         <div style='font-size: 0.86rem; color: #475569;'>{desc}</div>
     </div>
     """, unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
 
 # --- ANALYTICAL WORKBENCH TABS ---
 tab1, tab2, tab3, tab4 = st.tabs([
