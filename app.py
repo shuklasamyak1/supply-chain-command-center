@@ -17,7 +17,7 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
 
-    /* 1. Global CSS Variables: Overrides Streamlit's Native Red Engine */
+    /* 1. Global CSS Variables: Overrides Streamlit Native Engine */
     :root, .stApp {
         --primary-color: #0070AD !important;
         background-color: #F8FAFC !important;
@@ -32,22 +32,6 @@ st.markdown("""
         border-right: 1px solid #1E293B !important;
     }
     
-    /* Section Headings in Sidebar - Force High Contrast White */
-    section[data-testid="stSidebar"] h1, 
-    section[data-testid="stSidebar"] h2, 
-    section[data-testid="stSidebar"] h3,
-    section[data-testid="stSidebar"] h4,
-    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h1,
-    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2,
-    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h3,
-    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h4 {
-        color: #FFFFFF !important;
-        font-family: 'Inter', sans-serif !important;
-        font-weight: 800 !important;
-        letter-spacing: -0.2px !important;
-        margin-top: 14px !important;
-    }
-
     /* Input Field Labels */
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] label p,
@@ -57,7 +41,7 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* Fix Dark Numbers & Values (10000, 0.88, 90.00, etc.) */
+    /* Slider Values */
     section[data-testid="stSidebar"] [data-testid="stSlider"] div,
     section[data-testid="stSidebar"] [data-testid="stSlider"] span,
     section[data-testid="stSidebar"] [data-testid="stSlider"] p {
@@ -74,7 +58,7 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* Current Slider Value Box / Floating Tooltip */
+    /* Current Slider Value Box */
     section[data-testid="stSidebar"] div[data-testid="stThumbValue"] {
         background-color: #0070AD !important;
         color: #FFFFFF !important;
@@ -85,24 +69,17 @@ st.markdown("""
         padding: 2px 6px !important;
     }
 
-    /* Slider Track & Thumb Colors */
+    /* Slider Track & Thumb */
     section[data-testid="stSidebar"] div[data-baseweb="slider"] div[role="slider"] {
         background-color: #0070AD !important;
         border: 2px solid #FFFFFF !important;
         box-shadow: 0 0 0 2px rgba(0, 112, 173, 0.5) !important;
     }
-    /* Active Track (Left of Thumb) */
     section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div > div {
         background: #0070AD !important;
     }
-    /* Inactive Track (Right of Thumb) */
     section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div {
         background: #334155 !important;
-    }
-
-    section[data-testid="stSidebar"] hr {
-        border-color: #1E293B !important;
-        margin: 20px 0 !important;
     }
 
     /* 3. Executive Metric Cards */
@@ -220,10 +197,9 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* 6. Typography (Scoped strictly to Main Content) */
+    /* 6. Main Canvas Typography */
     .main h1, .main h2, .main h3, .main h4,
-    [data-testid="stMain"] h1, [data-testid="stMain"] h2, [data-testid="stMain"] h3, [data-testid="stMain"] h4,
-    [data-testid="stMainBlockContainer"] h1, [data-testid="stMainBlockContainer"] h2, [data-testid="stMainBlockContainer"] h3, [data-testid="stMainBlockContainer"] h4 {
+    [data-testid="stMain"] h1, [data-testid="stMain"] h2, [data-testid="stMain"] h3, [data-testid="stMain"] h4 {
         color: #0F172A !important;
         font-family: 'Inter', sans-serif !important;
         font-weight: 800 !important;
@@ -260,13 +236,20 @@ default_nodes = pd.DataFrame([
 
 # --- SIDEBAR: PARAMETERS ---
 with st.sidebar:
-    st.markdown("<h3>1. Operational Targets</h3>", unsafe_allow_html=True)
+    st.markdown(
+        "<div style='color: #FFFFFF !important; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.2px; margin-top: 10px; margin-bottom: 12px; font-family: Inter, sans-serif;'>1. Operational Targets</div>",
+        unsafe_allow_html=True
+    )
     demand = st.slider("Target Network Demand (Units)", min_value=3000, max_value=15000, value=10000, step=500)
     sla_floor = st.slider("Contractual SLA Floor (Min %)", min_value=0.70, max_value=0.99, value=0.88, step=0.01, format="%.2f")
     carbon_cap = st.slider("Scope-3 Carbon Cap (Metric Tons)", min_value=30.0, max_value=150.0, value=90.0, step=5.0)
     
-    st.markdown("---")
-    st.markdown("<h3>2. Macro Surcharges</h3>", unsafe_allow_html=True)
+    st.markdown("<hr style='border: none; border-top: 1px solid #1E293B; margin: 24px 0;'>", unsafe_allow_html=True)
+    
+    st.markdown(
+        "<div style='color: #FFFFFF !important; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.2px; margin-bottom: 12px; font-family: Inter, sans-serif;'>2. Macro Surcharges</div>",
+        unsafe_allow_html=True
+    )
     freight_shock = st.slider("Global Freight Shock Adder (€/unit)", min_value=0.0, max_value=10.0, value=0.0, step=0.5)
 
 # --- EDITABLE NETWORK TOPOLOGY ---
