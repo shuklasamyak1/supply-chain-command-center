@@ -13,158 +13,171 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- BESPOKE PROFESSIONAL TYPOGRAPHY & PALETTE STYLING ---
+# --- FRENCH INSTITUTIONAL / BIG-4 EXECUTIVE PALETTE & TYPOGRAPHY ---
 st.markdown("""
 <style>
-    /* 1. Import Professional Enterprise Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
 
-    /* Global Base */
+    /* 1. Global App Canvas */
     .stApp {
-        background-color: #121842;
-        color: #F2EEFF;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #F8FAFC !important;
+        color: #0F172A !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         -webkit-font-smoothing: antialiased;
     }
-    
-    /* Sidebar Styling */
+
+    /* 2. Executive Deep-Navy Sidebar */
     section[data-testid="stSidebar"] {
-        background-color: #181F54 !important;
-        border-right: 1px solid rgba(184, 169, 255, 0.2) !important;
+        background-color: #0F172A !important;
+        border-right: 1px solid #E2E8F0 !important;
         font-family: 'Inter', sans-serif !important;
     }
     section[data-testid="stSidebar"] h1, 
     section[data-testid="stSidebar"] h2, 
     section[data-testid="stSidebar"] h3,
-    section[data-testid="stSidebar"] label,
-    section[data-testid="stSidebar"] .stMarkdown {
-        color: #F2EEFF !important;
+    section[data-testid="stSidebar"] h4 {
+        color: #FFFFFF !important;
         font-family: 'Inter', sans-serif !important;
+        font-weight: 700 !important;
+    }
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] label p,
+    section[data-testid="stSidebar"] label span {
+        color: #F1F5F9 !important;
+        font-size: 0.88rem !important;
+        font-weight: 600 !important;
+    }
+    section[data-testid="stSidebar"] .stMarkdown p {
+        color: #94A3B8 !important;
+    }
+    section[data-testid="stSidebar"] hr {
+        border-color: rgba(255, 255, 255, 0.12) !important;
     }
 
-    /* Cards & Containers */
+    /* 3. Executive Metric Cards */
     .glass-card {
-        background: #1B235E;
-        border: 1px solid rgba(184, 169, 255, 0.22);
-        border-radius: 8px;
-        padding: 16px 20px;
-        margin-bottom: 14px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-    .glass-card-accent {
-        background: linear-gradient(135deg, #1B235E 0%, #212B7B 100%);
-        border: 1px solid #B8A9FF;
-        border-radius: 8px;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
         padding: 18px 22px;
         margin-bottom: 14px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+    .glass-card-accent {
+        background: #FFFFFF;
+        border: 1px solid #CBD5E1;
+        border-left: 4px solid #0070AD;
+        border-radius: 10px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
     }
     
-    /* Executive Metric Block (JetBrains Mono for Monospaced Alignment) */
     .metric-value {
         font-family: 'JetBrains Mono', monospace;
         font-size: 1.85rem;
         font-weight: 700;
-        color: #E0EFBA;
+        color: #0070AD;
         letter-spacing: -0.8px;
         line-height: 1.2;
     }
     .metric-sub {
         font-family: 'Inter', sans-serif;
-        font-size: 0.76rem;
-        color: #B8A9FF;
-        font-weight: 600;
+        font-size: 0.75rem;
+        color: #64748B;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.9px;
-        margin-bottom: 4px;
+        letter-spacing: 0.8px;
+        margin-bottom: 6px;
     }
     .metric-caption {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 0.76rem;
-        color: #D4CDFF;
-        margin-top: 4px;
+        font-size: 0.78rem;
+        color: #0F172A;
+        font-weight: 500;
+        margin-top: 6px;
     }
 
-    /* Directives & Badges */
+    /* 4. Action Directives & Badges */
     .directive-box {
-        background: #161D53;
-        border-left: 4px solid #E0EFBA;
-        padding: 12px 16px;
-        border-radius: 0 6px 6px 0;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        padding: 14px 18px;
+        border-radius: 8px;
         margin-bottom: 10px;
-        border-top: 1px solid rgba(184, 169, 255, 0.15);
-        border-right: 1px solid rgba(184, 169, 255, 0.15);
-        border-bottom: 1px solid rgba(184, 169, 255, 0.15);
     }
     .badge-priority {
-        background-color: rgba(224, 239, 186, 0.16);
-        color: #E0EFBA;
-        border: 1px solid #E0EFBA;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.72rem;
+        background-color: #E0F2FE;
+        color: #0369A1;
+        border: 1px solid #BAE6FD;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.74rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-family: 'Inter', sans-serif;
     }
     .badge-balancing {
-        background-color: rgba(184, 169, 255, 0.18);
-        color: #B8A9FF;
-        border: 1px solid #B8A9FF;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.72rem;
+        background-color: #F1F5F9;
+        color: #334155;
+        border: 1px solid #CBD5E1;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.74rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-family: 'Inter', sans-serif;
     }
     .badge-bypassed {
-        background-color: rgba(255, 120, 120, 0.14);
-        color: #FF9E9E;
-        border: 1px solid #FF7878;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.72rem;
+        background-color: #FEF2F2;
+        color: #991B1B;
+        border: 1px solid #FECACA;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.74rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-family: 'Inter', sans-serif;
     }
 
-    /* Streamlit Tabs */
+    /* 5. Streamlit Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        border-bottom: 1px solid rgba(184, 169, 255, 0.2);
+        border-bottom: 1px solid #E2E8F0;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: #181F54 !important;
+        background-color: #FFFFFF !important;
         border-radius: 6px 6px 0 0 !important;
-        color: #B8A9FF !important;
-        padding: 8px 16px !important;
-        border: 1px solid rgba(184, 169, 255, 0.2) !important;
+        color: #64748B !important;
+        padding: 10px 18px !important;
+        border: 1px solid #E2E8F0 !important;
         border-bottom: none !important;
         font-family: 'Inter', sans-serif !important;
         font-size: 0.88rem !important;
         font-weight: 600 !important;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #212B7B !important;
-        color: #E0EFBA !important;
-        border: 1px solid #B8A9FF !important;
-        border-bottom: 2px solid #E0EFBA !important;
+        background-color: #0070AD !important;
+        color: #FFFFFF !important;
+        border: 1px solid #0070AD !important;
         font-weight: 700 !important;
+    }
+    .stTabs [aria-selected="true"] p {
+        color: #FFFFFF !important;
     }
 
-    /* Headings & Text */
+    /* 6. Typography & Contrast */
     h1, h2, h3, h4 {
-        color: #F2EEFF !important;
+        color: #0F172A !important;
         font-family: 'Inter', sans-serif !important;
-        font-weight: 700 !important;
+        font-weight: 800 !important;
         letter-spacing: -0.4px;
     }
-    p, span, label {
-        color: #F2EEFF;
+    p, span {
+        color: #334155;
         font-family: 'Inter', sans-serif;
     }
 </style>
@@ -173,12 +186,12 @@ st.markdown("""
 # --- HEADER SECTION ---
 col_head, col_badge = st.columns([4, 1])
 with col_head:
-    st.markdown("<h1 style='margin-bottom: 0px;'>⚡ Autonomous Multi-Tier Sourcing & Disruption Solver</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #B8A9FF; font-size: 0.95rem; margin-top: 2px;'>Prescriptive Optimization with LP Relaxation Duals & Stochastic Monte Carlo Tail-Risk Stress Engine</p>", unsafe_allow_html=True)
+    st.markdown("<h1 style='margin-bottom: 2px;'>⚡ Autonomous Multi-Tier Sourcing & Disruption Solver</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #475569; font-size: 0.95rem; margin-top: 0px;'>Prescriptive Optimization with LP Relaxation Duals & Stochastic Monte Carlo Tail-Risk Stress Engine</p>", unsafe_allow_html=True)
 with col_badge:
     st.markdown("""
     <div style='text-align: right; padding-top: 10px;'>
-        <span style='background: #1B235E; border: 1px solid #B8A9FF; color: #E0EFBA; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: "JetBrains Mono", monospace;'>
+        <span style='background: #E0F2FE; border: 1px solid #BAE6FD; color: #0284C7; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; font-family: "JetBrains Mono", monospace;'>
             PuLP / CBC Active
         </span>
     </div>
@@ -194,13 +207,13 @@ default_nodes = pd.DataFrame([
 
 # --- SIDEBAR: PARAMETERS ---
 with st.sidebar:
-    st.markdown("<h3 style='color: #E0EFBA;'>1. Operational Targets</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #FFFFFF; margin-bottom: 12px;'>1. Operational Targets</h3>", unsafe_allow_html=True)
     demand = st.slider("Target Network Demand (Units)", min_value=3000, max_value=15000, value=10000, step=500)
     sla_floor = st.slider("Contractual SLA Floor (Min %)", min_value=0.70, max_value=0.99, value=0.88, step=0.01, format="%.2f")
     carbon_cap = st.slider("Scope-3 Carbon Cap (Metric Tons)", min_value=30.0, max_value=150.0, value=90.0, step=5.0)
     
     st.markdown("---")
-    st.markdown("<h3 style='color: #E0EFBA;'>2. Macro Surcharges</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #FFFFFF; margin-bottom: 12px;'>2. Macro Surcharges</h3>", unsafe_allow_html=True)
     freight_shock = st.slider("Global Freight Shock Adder (€/unit)", min_value=0.0, max_value=10.0, value=0.0, step=0.5)
 
 # --- EDITABLE NETWORK TOPOLOGY ---
@@ -218,10 +231,10 @@ def solve_sourcing(df, total_demand, min_sla, max_carbon):
     prob = pulp.LpProblem("Sourcing_Optimization", pulp.LpMinimize)
     hubs = df["Hub"].tolist()
     
-    # Use robust dictionary construction compatible across PuLP versions
+    # Robust dictionary variable declaration
     x = pulp.LpVariable.dicts("Alloc", hubs, lowBound=0.0)
     
-    # Apply upper bound capacity constraints
+    # Upper bound capacity constraints
     for h in hubs:
         cap_val = float(df.loc[df["Hub"] == h, "Capacity"].values[0])
         prob += x[h] <= cap_val, f"Cap_{h}"
@@ -264,7 +277,7 @@ topology["Total_Spend_EUR"] = topology["Allocated_Units"] * topology["Total_Land
 total_carbon_emitted = float(topology["Total_Carbon_Tons"].sum())
 blended_reliability = float((topology["Allocated_Units"] * topology["Reliability"]).sum() / demand)
 
-# Status Quo Benchmark (Enterprise Status-Quo Baseline)
+# Status Quo Benchmark
 avg_network_unit_cost = float(topology["Total_Landed_Expected"].mean())
 naive_spend = float(demand * avg_network_unit_cost)
 
@@ -291,7 +304,7 @@ with k2:
     st.markdown(f"""
     <div class='glass-card'>
         <div class='metric-sub'>Arbitrage Savings</div>
-        <div class='metric-value'>€{arbitrage_savings:,.0f}</div>
+        <div class='metric-value' style='color: #059669;'>€{arbitrage_savings:,.0f}</div>
         <div class='metric-caption'>vs. Status-Quo Baseline</div>
     </div>
     """, unsafe_allow_html=True)
@@ -300,7 +313,7 @@ with k3:
     st.markdown(f"""
     <div class='glass-card'>
         <div class='metric-sub'>Network Reliability</div>
-        <div class='metric-value'>{blended_reliability*100:.1f}%</div>
+        <div class='metric-value' style='color: #0F172A;'>{blended_reliability*100:.1f}%</div>
         <div class='metric-caption'>Target Floor: {sla_floor*100:.1f}%</div>
     </div>
     """, unsafe_allow_html=True)
@@ -309,15 +322,15 @@ with k4:
     st.markdown(f"""
     <div class='glass-card'>
         <div class='metric-sub'>Scope-3 Footprint</div>
-        <div class='metric-value'>{total_carbon_emitted:.1f}t</div>
+        <div class='metric-value' style='color: #D97706;'>{total_carbon_emitted:.1f}t</div>
         <div class='metric-caption'>Ceiling: {carbon_cap:.1f} Metric Tons</div>
     </div>
     """, unsafe_allow_html=True)
 
 # --- PRESCRIPTIVE ALLOCATION DIRECTIVES ---
 st.markdown("<div class='glass-card-accent'>", unsafe_allow_html=True)
-st.markdown("<h3 style='margin-top: 0; margin-bottom: 8px; color: #E0EFBA;'>🎯 Prescriptive Executive Sourcing Directives</h3>", unsafe_allow_html=True)
-st.markdown("<p style='font-size: 0.88rem; color: #F2EEFF; margin-bottom: 14px;'>Actionable node-by-node procurement directives derived from the solved LP simplex:</p>", unsafe_allow_html=True)
+st.markdown("<h3 style='margin-top: 0; margin-bottom: 6px; color: #0F172A;'>🎯 Prescriptive Executive Sourcing Directives</h3>", unsafe_allow_html=True)
+st.markdown("<p style='font-size: 0.88rem; color: #64748B; margin-bottom: 16px;'>Actionable node-by-node procurement directives derived from the solved LP simplex:</p>", unsafe_allow_html=True)
 
 for _, row in topology.iterrows():
     hub_name = row['Hub']
@@ -338,10 +351,10 @@ for _, row in topology.iterrows():
     st.markdown(f"""
     <div class='directive-box'>
         <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;'>
-            <span style='font-weight: 700; color: #F2EEFF; font-size: 0.95rem;'>{hub_name}</span>
+            <span style='font-weight: 700; color: #0F172A; font-size: 0.95rem;'>{hub_name}</span>
             {badge}
         </div>
-        <div style='font-size: 0.85rem; color: #D4CDFF;'>{desc}</div>
+        <div style='font-size: 0.86rem; color: #475569;'>{desc}</div>
     </div>
     """, unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
@@ -354,21 +367,21 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🔍 Dual Shadow Pricing"
 ])
 
-# Custom Plotly Theme with JetBrains Mono / Inter Integration
+# Enterprise French Consulting Plotly Theme
 PLOTLY_TEMPLATE = {
     "layout": {
-        "paper_bgcolor": "#1B235E",
-        "plot_bgcolor": "#161D53",
-        "font": {"color": "#F2EEFF", "family": "Inter, sans-serif"},
+        "paper_bgcolor": "#FFFFFF",
+        "plot_bgcolor": "#FFFFFF",
+        "font": {"color": "#0F172A", "family": "Inter, sans-serif"},
         "xaxis": {
-            "gridcolor": "rgba(184, 169, 255, 0.15)",
-            "zerolinecolor": "rgba(184, 169, 255, 0.2)",
-            "tickfont": {"family": "JetBrains Mono, monospace", "size": 11}
+            "gridcolor": "#F1F5F9",
+            "zerolinecolor": "#E2E8F0",
+            "tickfont": {"family": "JetBrains Mono, monospace", "size": 11, "color": "#475569"}
         },
         "yaxis": {
-            "gridcolor": "rgba(184, 169, 255, 0.15)",
-            "zerolinecolor": "rgba(184, 169, 255, 0.2)",
-            "tickfont": {"family": "JetBrains Mono, monospace", "size": 11}
+            "gridcolor": "#F1F5F9",
+            "zerolinecolor": "#E2E8F0",
+            "tickfont": {"family": "JetBrains Mono, monospace", "size": 11, "color": "#475569"}
         }
     }
 }
@@ -377,15 +390,15 @@ PLOTLY_TEMPLATE = {
 with tab1:
     c_left, c_right = st.columns([3, 2])
     with c_left:
-        st.markdown("#### Optimal Order Allocation vs. Available Capacity")
+        st.markdown("<h4 style='color: #0F172A;'>Optimal Order Allocation vs. Available Capacity</h4>", unsafe_allow_html=True)
         fig_bar = go.Figure()
         fig_bar.add_trace(go.Bar(
             x=topology["Hub"], y=topology["Capacity"],
-            name="Max Capacity", marker_color="rgba(184, 169, 255, 0.3)", marker_line_color="#B8A9FF", marker_line_width=1.5
+            name="Max Capacity", marker_color="#E2E8F0", marker_line_color="#CBD5E1", marker_line_width=1
         ))
         fig_bar.add_trace(go.Bar(
             x=topology["Hub"], y=topology["Allocated_Units"],
-            name="Optimal Order", marker_color="#E0EFBA"
+            name="Optimal Order", marker_color="#0070AD"
         ))
         fig_bar.update_layout(
             barmode="group",
@@ -397,10 +410,10 @@ with tab1:
         st.plotly_chart(fig_bar, use_container_width=True)
     
     with c_right:
-        st.markdown("#### Scope-3 Carbon Share by Hub")
+        st.markdown("<h4 style='color: #0F172A;'>Scope-3 Carbon Share by Hub</h4>", unsafe_allow_html=True)
         fig_pie = px.pie(
             topology, values="Total_Carbon_Tons", names="Hub",
-            color_discrete_sequence=["#E0EFBA", "#B8A9FF", "#8E7BE8", "#5A45BA"],
+            color_discrete_sequence=["#0070AD", "#0284C7", "#38BDF8", "#BAE6FD"],
             hole=0.45
         )
         fig_pie.update_layout(
@@ -414,8 +427,8 @@ with tab1:
 
 # --- TAB 2: MONTE CARLO RISK SIMULATION ---
 with tab2:
-    st.markdown("#### Stochastic Disruption Engine (1,000 Tail-Risk Trials)")
-    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Simulates Bernoulli failure shocks across hubs alongside Gaussian freight rate volatility to derive empirical Monte Carlo Value-at-Risk (VaR₉₅) and Conditional VaR (Expected Shortfall).</p>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color: #0F172A;'>Stochastic Disruption Engine (1,000 Tail-Risk Trials)</h4>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.85rem; color: #64748B;'>Simulates Bernoulli failure shocks across hubs alongside Gaussian freight rate volatility to derive empirical Monte Carlo Value-at-Risk (VaR₉₅) and Conditional VaR (Expected Shortfall).</p>", unsafe_allow_html=True)
     
     np.random.seed(42)
     n_sims = 1000
@@ -441,16 +454,16 @@ with tab2:
     
     m1, m2, m3 = st.columns(3)
     with m1:
-        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Expected (Mean) Spend</div><div class='metric-value'>€{sim_costs.mean():,.0f}</div></div>""", unsafe_allow_html=True)
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Expected (Mean) Spend</div><div class='metric-value' style='color: #0F172A;'>€{sim_costs.mean():,.0f}</div></div>""", unsafe_allow_html=True)
     with m2:
-        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Monte Carlo VaR (95%)</div><div class='metric-value' style='color: #B8A9FF;'>€{var_95:,.0f}</div></div>""", unsafe_allow_html=True)
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Monte Carlo VaR (95%)</div><div class='metric-value' style='color: #D97706;'>€{var_95:,.0f}</div></div>""", unsafe_allow_html=True)
     with m3:
-        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>CVaR 95 (Worst 5% Expected Loss)</div><div class='metric-value' style='color: #FF9E9E;'>€{cvar_95:,.0f}</div></div>""", unsafe_allow_html=True)
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>CVaR 95 (Worst 5% Expected Loss)</div><div class='metric-value' style='color: #DC2626;'>€{cvar_95:,.0f}</div></div>""", unsafe_allow_html=True)
 
     fig_hist = go.Figure()
-    fig_hist.add_trace(go.Histogram(x=sim_costs, nbinsx=45, marker_color="#B8A9FF", opacity=0.75, name="Scenario Cost Distribution"))
-    fig_hist.add_vline(x=var_95, line_dash="dash", line_color="#E0EFBA", line_width=2.5, annotation_text=f"MC VaR 95: €{var_95:,.0f}", annotation_position="top left", annotation_font_color="#E0EFBA", annotation_font_family="JetBrains Mono")
-    fig_hist.add_vline(x=cvar_95, line_dash="dot", line_color="#FF7878", line_width=2.5, annotation_text=f"CVaR 95: €{cvar_95:,.0f}", annotation_position="top right", annotation_font_color="#FF7878", annotation_font_family="JetBrains Mono")
+    fig_hist.add_trace(go.Histogram(x=sim_costs, nbinsx=45, marker_color="#93C5FD", opacity=0.85, name="Scenario Cost Distribution"))
+    fig_hist.add_vline(x=var_95, line_dash="dash", line_color="#D97706", line_width=2.5, annotation_text=f"MC VaR 95: €{var_95:,.0f}", annotation_position="top left", annotation_font_color="#D97706", annotation_font_family="JetBrains Mono")
+    fig_hist.add_vline(x=cvar_95, line_dash="dot", line_color="#DC2626", line_width=2.5, annotation_text=f"CVaR 95: €{cvar_95:,.0f}", annotation_position="top right", annotation_font_color="#DC2626", annotation_font_family="JetBrains Mono")
     fig_hist.update_layout(
         xaxis_title="Empirical Simulated Landed Spend (€)",
         yaxis_title="Simulation Frequency",
@@ -462,8 +475,8 @@ with tab2:
 
 # --- TAB 3: ESG PARETO FRONTIER ---
 with tab3:
-    st.markdown("#### Multi-Objective ε-Constraint Pareto Frontier")
-    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Traces optimal landed cost across stepped carbon caps to reveal the exact marginal price of network decarbonization.</p>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color: #0F172A;'>Multi-Objective ε-Constraint Pareto Frontier</h4>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.85rem; color: #64748B;'>Traces optimal landed cost across stepped carbon caps to reveal the exact marginal price of network decarbonization.</p>", unsafe_allow_html=True)
     
     cap_steps = np.linspace(45.0, 130.0, 15)
     pareto_data = []
@@ -479,14 +492,14 @@ with tab3:
     fig_pareto.add_trace(go.Scatter(
         x=pareto_df["Carbon_Cap_Tons"], y=pareto_df["Optimal_Cost"],
         mode="lines+markers",
-        line=dict(color="#E0EFBA", width=3),
-        marker=dict(size=8, color="#B8A9FF", line=dict(color="#121842", width=2)),
+        line=dict(color="#0070AD", width=3),
+        marker=dict(size=8, color="#0284C7", line=dict(color="#FFFFFF", width=2)),
         name="Pareto Frontier"
     ))
     fig_pareto.add_trace(go.Scatter(
         x=[total_carbon_emitted], y=[opt_cost],
         mode="markers",
-        marker=dict(size=14, color="#FF9E9E", symbol="star"),
+        marker=dict(size=14, color="#DC2626", symbol="star"),
         name="Current Operating Point"
     ))
     fig_pareto.update_layout(
@@ -500,14 +513,14 @@ with tab3:
 
 # --- TAB 4: DUAL SHADOW PRICING ---
 with tab4:
-    st.markdown("#### Constraint Dual Values & Sensitivity (Continuous LP Relaxation)")
-    st.markdown("<p style='font-size: 0.85rem; color: #B8A9FF;'>Dual shadow prices (π) extracted from the solved continuous simplex relaxation. Quantifies the exact marginal economic value of relaxing constraints or relieving network bottlenecks.</p>", unsafe_allow_html=True)
+    st.markdown("<h4 style='color: #0F172A;'>Constraint Dual Values & Sensitivity (Continuous LP Relaxation)</h4>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.85rem; color: #64748B;'>Dual shadow prices (π) extracted from the solved continuous simplex relaxation. Quantifies the exact marginal economic value of relaxing constraints or relieving network bottlenecks.</p>", unsafe_allow_html=True)
     
     demand_dual = float(duals.get("Demand_Constraint", 0.0))
     sla_dual = float(duals.get("SLA_Constraint", 0.0))
     carbon_dual = float(duals.get("Carbon_Constraint", 0.0))
 
-    # Dynamic interpretation adhering to complementary slackness
+    # Dynamic complementary slackness interpretation
     if abs(sla_dual) < 1e-4:
         sla_interp = "€0.00/unit — Non-binding constraint (slack exists; marginal relaxation provides no objective cost reduction)."
     else:
