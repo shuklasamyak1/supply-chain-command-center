@@ -8,7 +8,6 @@ import plotly.express as px
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
     page_title="Autonomous Multi-Tier Sourcing & Disruption Solver",
-    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -29,7 +28,7 @@ st.markdown("""
     /* 2. Executive Deep-Navy Sidebar */
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
-        border-right: 1px solid #E2E8F0 !important;
+        border-right: 1px solid #1E293B !important;
         font-family: 'Inter', sans-serif !important;
     }
     section[data-testid="stSidebar"] h1, 
@@ -39,11 +38,12 @@ st.markdown("""
         color: #FFFFFF !important;
         font-family: 'Inter', sans-serif !important;
         font-weight: 700 !important;
+        letter-spacing: -0.2px;
     }
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] label p,
     section[data-testid="stSidebar"] label span {
-        color: #F1F5F9 !important;
+        color: #F8FAFC !important;
         font-size: 0.88rem !important;
         font-weight: 600 !important;
     }
@@ -54,11 +54,38 @@ st.markdown("""
         border-color: rgba(255, 255, 255, 0.12) !important;
     }
 
-    /* 3. Executive Metric Cards */
+    /* 3. Slider Theme Override: Replace Default Red with Institutional Blue */
+    section[data-testid="stSidebar"] div[data-baseweb="slider"] div[role="slider"] {
+        background-color: #0070AD !important;
+        border: 2px solid #FFFFFF !important;
+        box-shadow: 0 0 0 2px rgba(0, 112, 173, 0.4) !important;
+    }
+    section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div:first-child {
+        background: #1E293B !important;
+    }
+    section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div:first-child > div {
+        background: #0070AD !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stThumbValue"] {
+        color: #FFFFFF !important;
+        background-color: #0070AD !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 700 !important;
+        font-size: 0.82rem !important;
+        border-radius: 4px !important;
+        padding: 2px 6px !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stTickBar"] div {
+        color: #94A3B8 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 0.72rem !important;
+    }
+
+    /* 4. Executive Metric Cards */
     .glass-card {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 10px;
+        border-radius: 8px;
         padding: 18px 22px;
         margin-bottom: 14px;
         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
@@ -67,7 +94,7 @@ st.markdown("""
         background: #FFFFFF;
         border: 1px solid #CBD5E1;
         border-left: 4px solid #0070AD;
-        border-radius: 10px;
+        border-radius: 8px;
         padding: 20px 24px;
         margin-bottom: 16px;
         box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
@@ -98,12 +125,12 @@ st.markdown("""
         margin-top: 6px;
     }
 
-    /* 4. Action Directives & Badges */
+    /* 5. Action Directives & Badges */
     .directive-box {
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
         padding: 14px 18px;
-        border-radius: 8px;
+        border-radius: 6px;
         margin-bottom: 10px;
     }
     .badge-priority {
@@ -111,7 +138,7 @@ st.markdown("""
         color: #0369A1;
         border: 1px solid #BAE6FD;
         padding: 4px 10px;
-        border-radius: 6px;
+        border-radius: 4px;
         font-size: 0.74rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -123,7 +150,7 @@ st.markdown("""
         color: #334155;
         border: 1px solid #CBD5E1;
         padding: 4px 10px;
-        border-radius: 6px;
+        border-radius: 4px;
         font-size: 0.74rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -131,11 +158,11 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     .badge-bypassed {
-        background-color: #FEF2F2;
-        color: #991B1B;
-        border: 1px solid #FECACA;
+        background-color: #F1F5F9;
+        color: #475569;
+        border: 1px solid #E2E8F0;
         padding: 4px 10px;
-        border-radius: 6px;
+        border-radius: 4px;
         font-size: 0.74rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -143,10 +170,10 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
 
-    /* 5. Streamlit Tabs */
+    /* 6. Streamlit Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        border-bottom: 1px solid #E2E8F0;
+        border-bottom: 1px solid #CBD5E1;
     }
     .stTabs [data-baseweb="tab"] {
         background-color: #FFFFFF !important;
@@ -169,7 +196,7 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* 6. Typography & Contrast */
+    /* 7. Typography & Contrast */
     h1, h2, h3, h4 {
         color: #0F172A !important;
         font-family: 'Inter', sans-serif !important;
@@ -186,12 +213,12 @@ st.markdown("""
 # --- HEADER SECTION ---
 col_head, col_badge = st.columns([4, 1])
 with col_head:
-    st.markdown("<h1 style='margin-bottom: 2px;'>⚡ Autonomous Multi-Tier Sourcing & Disruption Solver</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='margin-bottom: 2px;'>Autonomous Multi-Tier Sourcing & Disruption Solver</h1>", unsafe_allow_html=True)
     st.markdown("<p style='color: #475569; font-size: 0.95rem; margin-top: 0px;'>Prescriptive Optimization with LP Relaxation Duals & Stochastic Monte Carlo Tail-Risk Stress Engine</p>", unsafe_allow_html=True)
 with col_badge:
     st.markdown("""
     <div style='text-align: right; padding-top: 10px;'>
-        <span style='background: #E0F2FE; border: 1px solid #BAE6FD; color: #0284C7; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; font-family: "JetBrains Mono", monospace;'>
+        <span style='background: #E0F2FE; border: 1px solid #BAE6FD; color: #0284C7; padding: 6px 14px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; font-family: "JetBrains Mono", monospace;'>
             PuLP / CBC Active
         </span>
     </div>
@@ -217,7 +244,7 @@ with st.sidebar:
     freight_shock = st.slider("Global Freight Shock Adder (€/unit)", min_value=0.0, max_value=10.0, value=0.0, step=0.5)
 
 # --- EDITABLE NETWORK TOPOLOGY ---
-with st.expander("🛠️ Configure Node Topology & Supplier Contract Parameters", expanded=False):
+with st.expander("Configure Node Topology & Supplier Contract Parameters", expanded=False):
     st.write("Modify hub pricing, capacities, historical reliability rates, and environmental factors:")
     edited_df = st.data_editor(default_nodes, num_rows="dynamic", use_container_width=True)
 
@@ -231,18 +258,13 @@ def solve_sourcing(df, total_demand, min_sla, max_carbon):
     prob = pulp.LpProblem("Sourcing_Optimization", pulp.LpMinimize)
     hubs = df["Hub"].tolist()
     
-    # Robust dictionary variable declaration
     x = pulp.LpVariable.dicts("Alloc", hubs, lowBound=0.0)
     
-    # Upper bound capacity constraints
     for h in hubs:
         cap_val = float(df.loc[df["Hub"] == h, "Capacity"].values[0])
         prob += x[h] <= cap_val, f"Cap_{h}"
     
-    # Objective: Minimize Landed Cost + Expected Disruption Risk
     prob += pulp.lpSum([x[h] * float(df.loc[df["Hub"] == h, "Total_Landed_Expected"].values[0]) for h in hubs])
-    
-    # Constraints
     prob += pulp.lpSum([x[h] for h in hubs]) == float(total_demand), "Demand_Constraint"
     prob += pulp.lpSum([x[h] * float(df.loc[df["Hub"] == h, "Reliability"].values[0]) for h in hubs]) >= float(total_demand * min_sla), "SLA_Constraint"
     prob += pulp.lpSum([x[h] * (float(df.loc[df["Hub"] == h, "Carbon_kg"].values[0]) / 1000.0) for h in hubs]) <= float(max_carbon), "Carbon_Constraint"
@@ -253,7 +275,6 @@ def solve_sourcing(df, total_demand, min_sla, max_carbon):
     status = pulp.LpStatus[prob.status]
     allocations = {h: float(x[h].varValue) if x[h].varValue is not None else 0.0 for h in hubs}
     
-    # Extract Continuous Simplex Duals (Shadow Prices)
     shadow_prices = {}
     for name, c in prob.constraints.items():
         shadow_prices[name] = float(c.pi) if c.pi is not None else 0.0
@@ -262,22 +283,18 @@ def solve_sourcing(df, total_demand, min_sla, max_carbon):
 
 opt_status, alloc_dict, opt_cost, duals = solve_sourcing(topology, demand, sla_floor, carbon_cap)
 
-# Handle Infeasible Solution Gracefully
 if opt_status != "Optimal":
-    st.error(f"⚠️ Optimization status: {opt_status}. The specified SLA floor ({sla_floor*100:.1f}%) and Carbon Cap ({carbon_cap}t) are mutually incompatible with node capacities. Relax constraints in the sidebar.")
+    st.error(f"Optimization status: {opt_status}. The specified SLA floor ({sla_floor*100:.1f}%) and Carbon Cap ({carbon_cap}t) are mutually incompatible with node capacities. Relax constraints in the sidebar.")
     st.stop()
 
-# Attach allocations to topology
 topology["Allocated_Units"] = topology["Hub"].map(alloc_dict)
 topology["Alloc_Pct"] = (topology["Allocated_Units"] / topology["Capacity"]) * 100.0
 topology["Total_Carbon_Tons"] = (topology["Allocated_Units"] * topology["Carbon_kg"]) / 1000.0
 topology["Total_Spend_EUR"] = topology["Allocated_Units"] * topology["Total_Landed_Expected"]
 
-# Executive Metrics
 total_carbon_emitted = float(topology["Total_Carbon_Tons"].sum())
 blended_reliability = float((topology["Allocated_Units"] * topology["Reliability"]).sum() / demand)
 
-# Status Quo Benchmark
 avg_network_unit_cost = float(topology["Total_Landed_Expected"].mean())
 naive_spend = float(demand * avg_network_unit_cost)
 
@@ -304,7 +321,7 @@ with k2:
     st.markdown(f"""
     <div class='glass-card'>
         <div class='metric-sub'>Arbitrage Savings</div>
-        <div class='metric-value' style='color: #059669;'>€{arbitrage_savings:,.0f}</div>
+        <div class='metric-value' style='color: #0F172A;'>€{arbitrage_savings:,.0f}</div>
         <div class='metric-caption'>vs. Status-Quo Baseline</div>
     </div>
     """, unsafe_allow_html=True)
@@ -322,14 +339,14 @@ with k4:
     st.markdown(f"""
     <div class='glass-card'>
         <div class='metric-sub'>Scope-3 Footprint</div>
-        <div class='metric-value' style='color: #D97706;'>{total_carbon_emitted:.1f}t</div>
+        <div class='metric-value' style='color: #0070AD;'>{total_carbon_emitted:.1f}t</div>
         <div class='metric-caption'>Ceiling: {carbon_cap:.1f} Metric Tons</div>
     </div>
     """, unsafe_allow_html=True)
 
 # --- PRESCRIPTIVE ALLOCATION DIRECTIVES ---
 st.markdown("<div class='glass-card-accent'>", unsafe_allow_html=True)
-st.markdown("<h3 style='margin-top: 0; margin-bottom: 6px; color: #0F172A;'>🎯 Prescriptive Executive Sourcing Directives</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='margin-top: 0; margin-bottom: 6px; color: #0F172A;'>Prescriptive Executive Sourcing Directives</h3>", unsafe_allow_html=True)
 st.markdown("<p style='font-size: 0.88rem; color: #64748B; margin-bottom: 16px;'>Actionable node-by-node procurement directives derived from the solved LP simplex:</p>", unsafe_allow_html=True)
 
 for _, row in topology.iterrows():
@@ -361,13 +378,12 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # --- ANALYTICAL WORKBENCH TABS ---
 tab1, tab2, tab3, tab4 = st.tabs([
-    "📊 Sourcing Matrix & ESG", 
-    "🎲 Monte Carlo VaR Tail Risk", 
-    "📈 Multi-Objective Pareto Frontier", 
-    "🔍 Dual Shadow Pricing"
+    "Sourcing Matrix & ESG", 
+    "Monte Carlo VaR Tail Risk", 
+    "Multi-Objective Pareto Frontier", 
+    "Dual Shadow Pricing"
 ])
 
-# Enterprise French Consulting Plotly Theme
 PLOTLY_TEMPLATE = {
     "layout": {
         "paper_bgcolor": "#FFFFFF",
@@ -456,14 +472,14 @@ with tab2:
     with m1:
         st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Expected (Mean) Spend</div><div class='metric-value' style='color: #0F172A;'>€{sim_costs.mean():,.0f}</div></div>""", unsafe_allow_html=True)
     with m2:
-        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Monte Carlo VaR (95%)</div><div class='metric-value' style='color: #D97706;'>€{var_95:,.0f}</div></div>""", unsafe_allow_html=True)
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>Monte Carlo VaR (95%)</div><div class='metric-value' style='color: #0070AD;'>€{var_95:,.0f}</div></div>""", unsafe_allow_html=True)
     with m3:
-        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>CVaR 95 (Worst 5% Expected Loss)</div><div class='metric-value' style='color: #DC2626;'>€{cvar_95:,.0f}</div></div>""", unsafe_allow_html=True)
+        st.markdown(f"""<div class='glass-card'><div class='metric-sub'>CVaR 95 (Worst 5% Expected Loss)</div><div class='metric-value' style='color: #334155;'>€{cvar_95:,.0f}</div></div>""", unsafe_allow_html=True)
 
     fig_hist = go.Figure()
     fig_hist.add_trace(go.Histogram(x=sim_costs, nbinsx=45, marker_color="#93C5FD", opacity=0.85, name="Scenario Cost Distribution"))
-    fig_hist.add_vline(x=var_95, line_dash="dash", line_color="#D97706", line_width=2.5, annotation_text=f"MC VaR 95: €{var_95:,.0f}", annotation_position="top left", annotation_font_color="#D97706", annotation_font_family="JetBrains Mono")
-    fig_hist.add_vline(x=cvar_95, line_dash="dot", line_color="#DC2626", line_width=2.5, annotation_text=f"CVaR 95: €{cvar_95:,.0f}", annotation_position="top right", annotation_font_color="#DC2626", annotation_font_family="JetBrains Mono")
+    fig_hist.add_vline(x=var_95, line_dash="dash", line_color="#0070AD", line_width=2.5, annotation_text=f"MC VaR 95: €{var_95:,.0f}", annotation_position="top left", annotation_font_color="#0070AD", annotation_font_family="JetBrains Mono")
+    fig_hist.add_vline(x=cvar_95, line_dash="dot", line_color="#0F172A", line_width=2.5, annotation_text=f"CVaR 95: €{cvar_95:,.0f}", annotation_position="top right", annotation_font_color="#0F172A", annotation_font_family="JetBrains Mono")
     fig_hist.update_layout(
         xaxis_title="Empirical Simulated Landed Spend (€)",
         yaxis_title="Simulation Frequency",
@@ -499,7 +515,7 @@ with tab3:
     fig_pareto.add_trace(go.Scatter(
         x=[total_carbon_emitted], y=[opt_cost],
         mode="markers",
-        marker=dict(size=14, color="#DC2626", symbol="star"),
+        marker=dict(size=14, color="#0F172A", symbol="diamond"),
         name="Current Operating Point"
     ))
     fig_pareto.update_layout(
@@ -520,7 +536,6 @@ with tab4:
     sla_dual = float(duals.get("SLA_Constraint", 0.0))
     carbon_dual = float(duals.get("Carbon_Constraint", 0.0))
 
-    # Dynamic complementary slackness interpretation
     if abs(sla_dual) < 1e-4:
         sla_interp = "€0.00/unit — Non-binding constraint (slack exists; marginal relaxation provides no objective cost reduction)."
     else:
