@@ -12,25 +12,27 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- FRENCH INSTITUTIONAL / BIG-4 EXECUTIVE PALETTE & TYPOGRAPHY ---
+# --- FRENCH INSTITUTIONAL PALETTE & BULLETPROOF WIDGET OVERRIDES ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
 
-    /* 1. Global App Canvas */
-    .stApp {
+    /* 1. Global CSS Variables: Overrides Streamlit's Native Red Engine */
+    :root, .stApp {
+        --primary-color: #0070AD !important;
         background-color: #F8FAFC !important;
         color: #0F172A !important;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         -webkit-font-smoothing: antialiased;
     }
 
-    /* 2. Executive Deep-Navy Sidebar */
+    /* 2. Deep Navy Executive Sidebar */
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
         border-right: 1px solid #1E293B !important;
-        font-family: 'Inter', sans-serif !important;
     }
+    
+    /* Section Headings in Sidebar */
     section[data-testid="stSidebar"] h1, 
     section[data-testid="stSidebar"] h2, 
     section[data-testid="stSidebar"] h3,
@@ -39,49 +41,67 @@ st.markdown("""
         font-family: 'Inter', sans-serif !important;
         font-weight: 700 !important;
         letter-spacing: -0.2px;
+        margin-top: 10px !important;
     }
+
+    /* Input Field Labels */
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] label p,
     section[data-testid="stSidebar"] label span {
-        color: #F8FAFC !important;
-        font-size: 0.88rem !important;
+        color: #FFFFFF !important;
+        font-size: 0.90rem !important;
         font-weight: 600 !important;
     }
-    section[data-testid="stSidebar"] .stMarkdown p {
-        color: #94A3B8 !important;
-    }
-    section[data-testid="stSidebar"] hr {
-        border-color: rgba(255, 255, 255, 0.12) !important;
+
+    /* Fix Dark Numbers & Values (10000, 0.88, 90.00, etc.) */
+    section[data-testid="stSidebar"] [data-testid="stSlider"] div,
+    section[data-testid="stSidebar"] [data-testid="stSlider"] span,
+    section[data-testid="stSidebar"] [data-testid="stSlider"] p {
+        color: #F8FAFC !important;
     }
 
-    /* 3. Slider Theme Override: Replace Default Red with Institutional Blue */
-    section[data-testid="stSidebar"] div[data-baseweb="slider"] div[role="slider"] {
-        background-color: #0070AD !important;
-        border: 2px solid #FFFFFF !important;
-        box-shadow: 0 0 0 2px rgba(0, 112, 173, 0.4) !important;
-    }
-    section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div:first-child {
-        background: #1E293B !important;
-    }
-    section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div:first-child > div {
-        background: #0070AD !important;
-    }
-    section[data-testid="stSidebar"] div[data-testid="stThumbValue"] {
-        color: #FFFFFF !important;
-        background-color: #0070AD !important;
-        font-family: 'JetBrains Mono', monospace !important;
-        font-weight: 700 !important;
-        font-size: 0.82rem !important;
-        border-radius: 4px !important;
-        padding: 2px 6px !important;
-    }
+    /* Slider Min / Max Labels (3000, 15000, etc.) */
+    section[data-testid="stSidebar"] [data-testid="stTickBarMin"],
+    section[data-testid="stSidebar"] [data-testid="stTickBarMax"],
     section[data-testid="stSidebar"] div[data-testid="stTickBar"] div {
         color: #94A3B8 !important;
         font-family: 'JetBrains Mono', monospace !important;
-        font-size: 0.72rem !important;
+        font-size: 0.74rem !important;
+        font-weight: 600 !important;
     }
 
-    /* 4. Executive Metric Cards */
+    /* Current Slider Value Box / Floating Tooltip */
+    section[data-testid="stSidebar"] div[data-testid="stThumbValue"] {
+        background-color: #0070AD !important;
+        color: #FFFFFF !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 700 !important;
+        font-size: 0.80rem !important;
+        border-radius: 4px !important;
+        padding: 2px 6px !important;
+    }
+
+    /* Slider Track & Thumb Colors */
+    section[data-testid="stSidebar"] div[data-baseweb="slider"] div[role="slider"] {
+        background-color: #0070AD !important;
+        border: 2px solid #FFFFFF !important;
+        box-shadow: 0 0 0 2px rgba(0, 112, 173, 0.5) !important;
+    }
+    /* Active Track (Left of Thumb) */
+    section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div > div {
+        background: #0070AD !important;
+    }
+    /* Inactive Track (Right of Thumb) */
+    section[data-testid="stSidebar"] div[data-baseweb="slider"] > div > div {
+        background: #334155 !important;
+    }
+
+    section[data-testid="stSidebar"] hr {
+        border-color: #1E293B !important;
+        margin: 20px 0 !important;
+    }
+
+    /* 3. Executive Metric Cards */
     .glass-card {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
@@ -125,7 +145,7 @@ st.markdown("""
         margin-top: 6px;
     }
 
-    /* 5. Action Directives & Badges */
+    /* 4. Action Directives & Badges */
     .directive-box {
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
@@ -170,7 +190,7 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
 
-    /* 6. Streamlit Tabs */
+    /* 5. Streamlit Tabs */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         border-bottom: 1px solid #CBD5E1;
@@ -196,7 +216,7 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* 7. Typography & Contrast */
+    /* 6. Typography */
     h1, h2, h3, h4 {
         color: #0F172A !important;
         font-family: 'Inter', sans-serif !important;
