@@ -8,15 +8,6 @@ An enterprise-grade Prescriptive Operations Research platform formulating a cont
 
 ---
 
-## 🎬 System Overview & Live Walkthrough
-
-### Executive Terminal & Decision Engine Demo
-https://github.com/user-attachments/assets/Dashboard_Preview.mp4
-
-> **Prescriptive Decision Directives:** Converts raw optimization solution vectors into clear executive procurement mandates (`Priority: Max Allocation`, `Balancing Node`, or `Avoid / Bypassed`) alongside binding bottleneck shadow values ($\pi_i$).
-
----
-
 ## 📸 Platform Previews
 
 ### 1. Executive Cockpit & Prescriptive Directives
