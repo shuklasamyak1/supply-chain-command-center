@@ -25,7 +25,7 @@ https://github.com/user-attachments/assets/Dashboard_Preview.mp4
 ### 2. Sourcing Matrix & Scope-3 ESG Allocations
 ![Sourcing Matrix](Preview1.png)
 
-### 3. Stochastic Monte Carlo Disruption Engine ($\text{VaR}_{95} / \text{CVaR}_{95}$)
+### 3. Stochastic Monte Carlo Disruption Engine 
 ![Monte Carlo Risk](Preview2.png)
 
 ---
