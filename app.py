@@ -32,16 +32,20 @@ st.markdown("""
         border-right: 1px solid #1E293B !important;
     }
     
-    /* Section Headings in Sidebar */
+    /* Section Headings in Sidebar - Force High Contrast White */
     section[data-testid="stSidebar"] h1, 
     section[data-testid="stSidebar"] h2, 
     section[data-testid="stSidebar"] h3,
-    section[data-testid="stSidebar"] h4 {
+    section[data-testid="stSidebar"] h4,
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h1,
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2,
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h3,
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h4 {
         color: #FFFFFF !important;
         font-family: 'Inter', sans-serif !important;
-        font-weight: 700 !important;
-        letter-spacing: -0.2px;
-        margin-top: 10px !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.2px !important;
+        margin-top: 14px !important;
     }
 
     /* Input Field Labels */
@@ -60,7 +64,7 @@ st.markdown("""
         color: #F8FAFC !important;
     }
 
-    /* Slider Min / Max Labels (3000, 15000, etc.) */
+    /* Slider Min / Max Labels */
     section[data-testid="stSidebar"] [data-testid="stTickBarMin"],
     section[data-testid="stSidebar"] [data-testid="stTickBarMax"],
     section[data-testid="stSidebar"] div[data-testid="stTickBar"] div {
@@ -216,8 +220,10 @@ st.markdown("""
         color: #FFFFFF !important;
     }
 
-    /* 6. Typography */
-    h1, h2, h3, h4 {
+    /* 6. Typography (Scoped strictly to Main Content) */
+    .main h1, .main h2, .main h3, .main h4,
+    [data-testid="stMain"] h1, [data-testid="stMain"] h2, [data-testid="stMain"] h3, [data-testid="stMain"] h4,
+    [data-testid="stMainBlockContainer"] h1, [data-testid="stMainBlockContainer"] h2, [data-testid="stMainBlockContainer"] h3, [data-testid="stMainBlockContainer"] h4 {
         color: #0F172A !important;
         font-family: 'Inter', sans-serif !important;
         font-weight: 800 !important;
@@ -254,13 +260,13 @@ default_nodes = pd.DataFrame([
 
 # --- SIDEBAR: PARAMETERS ---
 with st.sidebar:
-    st.markdown("<h3 style='color: #FFFFFF; margin-bottom: 12px;'>1. Operational Targets</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>1. Operational Targets</h3>", unsafe_allow_html=True)
     demand = st.slider("Target Network Demand (Units)", min_value=3000, max_value=15000, value=10000, step=500)
     sla_floor = st.slider("Contractual SLA Floor (Min %)", min_value=0.70, max_value=0.99, value=0.88, step=0.01, format="%.2f")
     carbon_cap = st.slider("Scope-3 Carbon Cap (Metric Tons)", min_value=30.0, max_value=150.0, value=90.0, step=5.0)
     
     st.markdown("---")
-    st.markdown("<h3 style='color: #FFFFFF; margin-bottom: 12px;'>2. Macro Surcharges</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>2. Macro Surcharges</h3>", unsafe_allow_html=True)
     freight_shock = st.slider("Global Freight Shock Adder (€/unit)", min_value=0.0, max_value=10.0, value=0.0, step=0.5)
 
 # --- EDITABLE NETWORK TOPOLOGY ---
