@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 
-An enterprise-grade Prescriptive Operations Research platform formulating a continuous linear optimization model to autonomously compute optimal purchase order allocations across global multi-tier supplier hubs. Integrates contractual SLA floors, Scope-3 carbon ceilings, 1,000-trial empirical Monte Carlo tail-risk simulations ($\text{VaR}_{95} / \text{CVaR}_{95}$), and continuous LP relaxation dual shadow price microeconomics.
+An enterprise-grade Prescriptive Operations Research platform formulating a continuous linear optimization model to autonomously compute optimal purchase order allocations across global multi-tier supplier hubs. Integrates contractual SLA floors, Scope-3 carbon ceilings, 1,000-trial empirical Monte Carlo tail-risk simulations (VaR95 and CVaR95), and continuous LP relaxation dual shadow price microeconomics.
 
 ---
 
